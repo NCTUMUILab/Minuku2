@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.BaseActivity">
+    <item
+        android:id="@+id/action_logout"
+        app:showAsAction="never"
+        android:title="@string/action_logout"
+        android:icon="@drawable/logout">
+    </item>
+</menu>

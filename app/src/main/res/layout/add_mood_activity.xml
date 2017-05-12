@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg2"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/moodmap_descriptor"
+        style="@style/NormalText"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textAlignment="center"
+        android:text="Tap and drag to select your mood"
+        android:textColor="@color/colorPrimaryDark"
+        android:background="@color/colorPrimaryLight"
+        android:textSize="14dp"/>
+
+        <edu.umich.si.inteco.minuku_2.view.customview.MoodEntryView
+        android:id="@+id/graphCustomView"
+        android:layout_width="match_parent"
+        android:layout_height="187dp"
+        android:layout_weight="0.80"
+        android:paddingTop="10dp"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/rejectButton"
+            android:text="Back"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@color/colorPrimaryLight"
+            android:layout_margin="15dp"/>
+
+        <Button
+            android:id="@+id/acceptButton"
+            android:text="Submit"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@color/colorPrimaryLight"
+            android:layout_margin="15dp"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/help_button"
+            android:src="@drawable/help"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
+</LinearLayout>

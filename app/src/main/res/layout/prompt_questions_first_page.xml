@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="We do not seem to have received much logs from you today. To help us understand better, please select a response."
+        android:paddingBottom="10dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:textSize="14dp"
+        android:paddingTop="20dp"
+        android:id="@+id/pageOneQuestion"/>
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/radio_button"
+        android:orientation="vertical"
+        android:padding="15dp">
+        <RadioButton android:id="@+id/forgot_to_log"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I did not have time to log data but I did perform diabetes related activities."
+            android:onClick="onRadioButtonClicked"
+            android:paddingLeft="5dp"
+            android:paddingBottom="10dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:textSize="14dp"/>
+        <RadioButton android:id="@+id/forgot_care_activities"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I do not have my data because I missed diabetes related activities."
+            android:onClick="onRadioButtonClicked"
+            android:paddingLeft="5dp"
+            android:paddingBottom="10dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:textSize="14dp"/>
+    </RadioGroup>
+</LinearLayout>

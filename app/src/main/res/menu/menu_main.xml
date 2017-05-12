@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.MainActivity">
+    <item
+        android:id="@+id/action_settings"
+        app:showAsAction="never"
+        android:title="Time Settings"
+        android:icon="@drawable/ic_settings">
+    </item>
+    <item
+        android:id="@+id/configure_location"
+        app:showAsAction="never"
+        android:title="Configure Location"
+        android:icon="@drawable/ic_location_on_black_24dp">
+    </item>
+
+</menu>

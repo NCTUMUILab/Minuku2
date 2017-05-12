@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <fragment
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mapview"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="Add New Location"
+            android:id ="@+id/addLocationButton"
+            style="?android:attr/buttonBarStyle"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@android:color/white"
+            android:textSize="20dp"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/white"
+            android:id="@+id/button_divider"
+            android:layout_below="@id/addLocationButton"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="View Saved Locations"
+            android:id ="@+id/seeLocationButton"
+            style="?android:attr/buttonBarStyle"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@android:color/white"
+            android:textSize="20dp"
+            android:layout_below="@+id/button_divider"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

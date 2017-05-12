@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/general_compensation_message"
+        android:textColor="@android:color/white"
+        android:padding="10dp"
+        android:background="@color/colorPrimaryDark"
+        style="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textAlignment="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/remaining_tasks"
+        style="@style/Base.TextAppearance.AppCompat.Medium"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/task_hint"
+        style="@style/Base.TextAppearance.AppCompat.Small"
+        android:text="Reports eligible for rewards - glucose reading, insulin shot, food, and mood."
+        android:padding="10dp"
+        android:paddingLeft="20dp"
+        android:textColor="@android:color/secondary_text_dark"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/total_response_count"
+        android:padding="10dp"
+        style="@style/Base.TextAppearance.AppCompat.Medium" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reward_count"
+        android:padding="10dp"
+        style="@style/Base.TextAppearance.AppCompat.Medium" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+</LinearLayout>
