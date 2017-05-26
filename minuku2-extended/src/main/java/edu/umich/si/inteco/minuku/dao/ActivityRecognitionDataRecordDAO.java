@@ -1,13 +1,9 @@
 package edu.umich.si.inteco.minuku.dao;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
@@ -46,6 +42,8 @@ public class ActivityRecognitionDataRecordDAO implements DAO<ActivityRecognition
     public void add(ActivityRecognitionDataRecord entity) throws DAOException {
 
         //TODO store in Json file.
+        //TODO (5/26) Need to store in sqllite first.
+        /*
         try {
             obj.put(String.valueOf(entity.getCreationTime()), entity.getMostProbableActivity().toString());
 
@@ -71,7 +69,7 @@ public class ActivityRecognitionDataRecordDAO implements DAO<ActivityRecognition
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
 
     }
 

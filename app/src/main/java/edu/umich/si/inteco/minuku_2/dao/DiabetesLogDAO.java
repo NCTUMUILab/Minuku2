@@ -10,9 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
@@ -112,7 +110,7 @@ public class DiabetesLogDAO implements DAO<DiabetesLogDataRecord> {
                                       final List<DiabetesLogDataRecord> synchronizedListOfRecords,
                                       final SettableFuture settableFuture) {
         Firebase firebaseRef = new Firebase(Constants.FIREBASE_URL_DIABETESLOG)
-                .child(userEmail)
+//                .child(userEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(someDate).toString());
 
         Log.d(TAG, "Checking the value of N "+ N);

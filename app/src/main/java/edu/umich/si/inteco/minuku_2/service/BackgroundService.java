@@ -46,7 +46,7 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        streamManager.updateStreamGenerators();
+        streamManager.updateStreamGenerators(); //TODO might need this, we will unblock it, but now we block for letting the app run.
         AlarmManager alarm = (AlarmManager)getSystemService(ALARM_SERVICE);
         alarm.set(
                 AlarmManager.RTC_WAKEUP,

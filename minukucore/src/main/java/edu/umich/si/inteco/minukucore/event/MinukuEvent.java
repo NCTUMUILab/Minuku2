@@ -43,7 +43,12 @@ public class MinukuEvent {
         this.eventType = anEventType;
     }
 
+    //TODO this function need to replace by getStreamSourceClass().
     public Class<? extends DataRecord> getType() {
+        return this.eventType;
+    }
+
+    public Class<? extends DataRecord> getStreamSourceClass() {
         return this.eventType;
     }
 }

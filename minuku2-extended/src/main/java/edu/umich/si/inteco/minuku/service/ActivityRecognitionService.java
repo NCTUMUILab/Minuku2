@@ -23,6 +23,8 @@ import edu.umich.si.inteco.minukucore.exception.StreamNotFoundException;
 
 public class ActivityRecognitionService extends IntentService {
 
+    private final String TAG = "ActivityRecognitionService";
+
     private String Latest_mMostProbableActivitytype;
     private DetectedActivity mMostProbableActivity;
     private List<DetectedActivity> mProbableActivities;
@@ -34,7 +36,7 @@ public class ActivityRecognitionService extends IntentService {
 
     public ActivityRecognitionService() {
         super("ActivityRecognitionService");
-        Log.e("ActivityRecognitionService","ActivityRecognitionService is constructed!");
+        Log.e(TAG,"ActivityRecognitionService is constructed!");
         //mActivityRecognitionManager = ContextManager.getActivityRecognitionManager();
     }
 
@@ -54,7 +56,7 @@ public class ActivityRecognitionService extends IntentService {
             mMostProbableActivity = result.getMostProbableActivity();
             detectedtime = new Date().getTime(); //TODO might be wrong, be aware for it!!
 
-            Log.e("MostProbableActivity:", "[test ActivityRecognition]" +   mMostProbableActivity.toString());
+            Log.d(TAG, "[test ActivityRecognition]" +   mMostProbableActivity.toString());
             try {
                 if (mProbableActivities != null && mMostProbableActivity != null)
                     mActivityRecognitionStreamGenerator.setActivitiesandDetectedtime(mProbableActivities, mMostProbableActivity, detectedtime);

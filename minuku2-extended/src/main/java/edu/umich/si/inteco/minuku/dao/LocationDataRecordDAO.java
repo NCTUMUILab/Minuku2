@@ -69,10 +69,11 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
     @Override
     public void add(LocationDataRecord entity) throws DAOException {
         Log.d(TAG, "Adding location data record.");
+        /* * This is old function created by umich.
         Firebase locationListRef = new Firebase(Constants.FIREBASE_URL_LOCATION)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
-        locationListRef.push().setValue((LocationDataRecord) entity);
+        locationListRef.push().setValue((LocationDataRecord) entity);*/
     }
 
     @Override
@@ -133,10 +134,11 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
                                       final Date someDate,
                                       final List<LocationDataRecord> synchronizedListOfRecords,
                                       final SettableFuture settableFuture) {
+        /* This is old function created by umich.
         Firebase firebaseRef = new Firebase(Constants.FIREBASE_URL_LOCATION)
                 .child(userEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(someDate).toString());
-
+        */
         if(N <= 0) {
             /* TODO(neerajkumar): Get this f***up fixed! */
 
@@ -149,7 +151,7 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
         }
 
 
-        firebaseRef.limitToLast(N).addListenerForSingleValueEvent(new ValueEventListener() {
+/*      firebaseRef.limitToLast(N).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -164,7 +166,7 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
 
                     // The first element in the list is actually the last in the database.
                     // Reverse the list before setting the future with a result.
-                    Collections.reverse(synchronizedListOfRecords);
+/*                    Collections.reverse(synchronizedListOfRecords);
 
                     settableFuture.set(synchronizedListOfRecords);
                     return;
@@ -175,7 +177,7 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
                     newN--;
                 }
                 Date newDate = new Date(someDate.getTime() - 26 * 60 * 60 * 1000); /* -1 Day */
-                getLastNValues(newN,
+/*              getLastNValues(newN,
                         userEmail,
                         newDate,
                         synchronizedListOfRecords,
@@ -191,14 +193,14 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
 
                 // The first element in the list is actually the last in the database.
                 // Reverse the list before setting the future with a result.
-                Collections.reverse(synchronizedListOfRecords);
+/*                Collections.reverse(synchronizedListOfRecords);
 
                 // This would mean that the firebase ref does not exist thereby meaning that
                 // the number of entries for all dates are over before we could get the last N
                 // results
                 settableFuture.set(synchronizedListOfRecords);
             }
-        });
+        });*/
     }
 
 }

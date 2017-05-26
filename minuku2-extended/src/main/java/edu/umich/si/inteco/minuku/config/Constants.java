@@ -147,4 +147,7 @@ public class Constants {
     public static final long MILLISECONDS_PER_MINUTE = SECONDS_PER_MINUTE*MILLISECONDS_PER_SECOND;
 
     public static boolean tabpos = false;
+
+    public static final String ACTIVITY_DELIMITER = ":";
+
 }

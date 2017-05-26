@@ -31,8 +31,8 @@ import java.util.Map;
 
 import edu.umich.si.inteco.minuku.config.Constants;
 import edu.umich.si.inteco.minuku.logger.Log;
-import edu.umich.si.inteco.minuku_2.PromptMissedDataQuesttionaireActivity;
-import edu.umich.si.inteco.minuku_2.QuestionnaireActivity;
+//import edu.umich.si.inteco.minuku_2.PromptMissedDataQuesttionaireActivity;
+//import edu.umich.si.inteco.minuku_2.QuestionnaireActivity;
 import edu.umich.si.inteco.minuku_2.R;
 import edu.umich.si.inteco.minuku_2.event.MissedReportsActionEvent;
 import edu.umich.si.inteco.minuku_2.preferences.ApplicationConstants;
@@ -53,7 +53,7 @@ public class MissedReportsAction {
 
     @Subscribe
     public void handleMissedReportsAction(MissedReportsActionEvent missedReportsEvent) {
-        Log.d(TAG, "Handling no data e vent for diabetes log data record");
+        Log.d(TAG, "Handling no data event for diabetes log data record");
         Map<String, String> dataSentToQuestinnaireActivity = new HashMap<>();
         dataSentToQuestinnaireActivity.put(Constants.BUNDLE_KEY_FOR_QUESTIONNAIRE_ID,
                 String.valueOf(QuestionConfig.missedReportQuestionnaire_2.getID()));
@@ -64,7 +64,7 @@ public class MissedReportsAction {
                 new ShowNotificationEventBuilder()
                         .setExpirationAction(ShowNotificationEvent.ExpirationAction.DISMISS)
                         .setExpirationTimeSeconds(Constants.MISSED_REPORT_NOTIFICATION_EXPIRATION_TIME)
-                        .setViewToShow(PromptMissedDataQuesttionaireActivity.class)
+                        //.setViewToShow(PromptMissedDataQuesttionaireActivity.class)
                         .setIconID(R.drawable.self_reflection)
                         .setTitle(Constants.MISSED_ACTIVITY_DATA_PROMPT_TITLE)
                         .setCategory(ApplicationConstants.NOTIFICATION_CATEGORY_MISSED_ACTIVITY)

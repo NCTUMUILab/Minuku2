@@ -23,6 +23,7 @@
 package edu.umich.si.inteco.minuku_2.manager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 
 import org.greenrobot.eventbus.EventBus;
@@ -32,6 +33,7 @@ import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import edu.umich.si.inteco.minuku.dao.ActivityRecognitionDataRecordDAO;
 import edu.umich.si.inteco.minuku.dao.FreeResponseQuestionDAO;
 import edu.umich.si.inteco.minuku.dao.LocationDataRecordDAO;
 import edu.umich.si.inteco.minuku.dao.MoodDataRecordDAO;
@@ -44,18 +46,15 @@ import edu.umich.si.inteco.minuku.event.IncrementLoadingProcessCountEvent;
 import edu.umich.si.inteco.minuku.logger.Log;
 import edu.umich.si.inteco.minuku.manager.MinukuDAOManager;
 import edu.umich.si.inteco.minuku.manager.MinukuSituationManager;
+import edu.umich.si.inteco.minuku.model.ActivityRecognitionDataRecord;
 import edu.umich.si.inteco.minuku.model.LocationDataRecord;
 import edu.umich.si.inteco.minuku.model.MoodDataRecord;
 import edu.umich.si.inteco.minuku.model.SemanticLocationDataRecord;
+import edu.umich.si.inteco.minuku.model.TransportationModeDataRecord;
 import edu.umich.si.inteco.minuku.model.UserSubmissionStats;
-import edu.umich.si.inteco.minuku.streamgenerator.FreeResponseQuestionStreamGenerator;
+import edu.umich.si.inteco.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.LocationStreamGenerator;
-import edu.umich.si.inteco.minuku.streamgenerator.MoodStreamGenerator;
-import edu.umich.si.inteco.minuku.streamgenerator.MultipleChoiceQuestionStreamGenerator;
-import edu.umich.si.inteco.minuku.streamgenerator.SemanticLocationStreamGenerator;
-import edu.umich.si.inteco.minuku.tags.Model;
-import edu.umich.si.inteco.minuku_2.action.MissedReportsAction;
-import edu.umich.si.inteco.minuku_2.action.MoodDataExpectedAction;
+import edu.umich.si.inteco.minuku.streamgenerator.TransportationModeStreamGenerator;
 import edu.umich.si.inteco.minuku_2.dao.DiabetesLogDAO;
 import edu.umich.si.inteco.minuku_2.dao.PromptMissedReportsQnADAO;
 import edu.umich.si.inteco.minuku_2.dao.TimelinePatchDataRecordDAO;
@@ -63,9 +62,6 @@ import edu.umich.si.inteco.minuku_2.model.DiabetesLogDataRecord;
 import edu.umich.si.inteco.minuku_2.model.PromptMissedReportsQnADataRecord;
 import edu.umich.si.inteco.minuku_2.model.TimelinePatchDataRecord;
 import edu.umich.si.inteco.minuku_2.question.QuestionConfig;
-import edu.umich.si.inteco.minuku_2.situation.MissedReportsSituation;
-import edu.umich.si.inteco.minuku_2.situation.MoodDataExpectedSituation;
-import edu.umich.si.inteco.minuku_2.streamgenerator.DiabetesLogStreamGenerator;
 import edu.umich.si.inteco.minukucore.event.ShowNotificationEvent;
 import edu.umich.si.inteco.minukucore.model.question.FreeResponse;
 import edu.umich.si.inteco.minukucore.model.question.MultipleChoice;
@@ -76,6 +72,8 @@ import edu.umich.si.inteco.minukucore.model.question.MultipleChoice;
 public class InstanceManager {
     private static InstanceManager instance = null;
     private Context mApplicationContext = null;
+    private static Context mContext = null;
+    private static Intent mintent;
     private UserSubmissionStats mUserSubmissionStats = null;
     private static String LOG_TAG = "InstanceManager";
 
@@ -97,6 +95,10 @@ public class InstanceManager {
 
     private Context getApplicationContext() {
         return mApplicationContext;
+    }
+
+    public static void setContexttoActivityRecognitionservice(Context context) {
+        mContext = context;
     }
 
     private void initialize() {
@@ -143,11 +145,19 @@ public class InstanceManager {
         PromptMissedReportsQnADAO promptMissedReportsQnADAO = new PromptMissedReportsQnADAO();
         daoManager.registerDaoFor(PromptMissedReportsQnADataRecord.class, promptMissedReportsQnADAO);
 
+        //TODO build new DAO here.
+        ActivityRecognitionDataRecordDAO activityRecognitionDataRecordDAO = new ActivityRecognitionDataRecordDAO();
+        daoManager.registerDaoFor(ActivityRecognitionDataRecord.class, activityRecognitionDataRecordDAO);
+
+        TransportationModeDataRecord transportationModeDataRecord = new TransportationModeDataRecord();
+        daoManager.registerDaoFor(ActivityRecognitionDataRecord.class, activityRecognitionDataRecordDAO);
+
+
         // Create corresponding stream generators. Only to be created once in Main Activity
         //creating a new stream registers it with the stream manager
         LocationStreamGenerator locationStreamGenerator =
                 new LocationStreamGenerator(getApplicationContext());
-        SemanticLocationStreamGenerator semanticLocationStreamGenerator =
+        /*SemanticLocationStreamGenerator semanticLocationStreamGenerator =  //TODO we might not need these StreamGenerator, yet.
                 new SemanticLocationStreamGenerator(getApplicationContext());
         FreeResponseQuestionStreamGenerator freeResponseQuestionStreamGenerator =
                 new FreeResponseQuestionStreamGenerator(getApplicationContext());
@@ -156,24 +166,32 @@ public class InstanceManager {
         MoodStreamGenerator moodStreamGenerator =
                 new MoodStreamGenerator(getApplicationContext());
         DiabetesLogStreamGenerator diabetesLogStreamGenerator =
-                new DiabetesLogStreamGenerator(getApplicationContext(), DiabetesLogDataRecord.class);
+                new DiabetesLogStreamGenerator(getApplicationContext(), DiabetesLogDataRecord.class);*/
 
+        //TODO build new StreamGenerator here.
+        ActivityRecognitionStreamGenerator activityRecognitionStreamGenerator =
+                new ActivityRecognitionStreamGenerator(getApplicationContext());
+
+        TransportationModeStreamGenerator transportationModeStreamGenerator =
+                new TransportationModeStreamGenerator(getApplicationContext());
 
 
         // All situations must be registered AFTER the stream generators are registers.
         MinukuSituationManager situationManager = MinukuSituationManager.getInstance();
 
-        MoodDataExpectedSituation moodDataExpectedSituation = new MoodDataExpectedSituation();
+        /*MoodDataExpectedSituation moodDataExpectedSituation = new MoodDataExpectedSituation();
         MoodDataExpectedAction moodDataExpectedAction = new MoodDataExpectedAction();
 
         MissedReportsSituation missedReportsSituation = new MissedReportsSituation(getApplicationContext());
-        MissedReportsAction missedReportsAction = new MissedReportsAction();
+        MissedReportsAction missedReportsAction = new MissedReportsAction();*/
+
+
 
         //create questionnaires
         QuestionConfig.getInstance().setUpQuestions(getApplicationContext());
 
         // Fetch tags
-        Model tagsModel = Model.getInstance();
+//        Model tagsModel = Model.getInstance();
 
         AsyncTask.execute(new Runnable() {
             @Override

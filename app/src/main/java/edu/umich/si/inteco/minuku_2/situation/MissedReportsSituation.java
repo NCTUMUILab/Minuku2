@@ -27,17 +27,14 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import edu.umich.si.inteco.minuku.config.UserPreferences;
 import edu.umich.si.inteco.minuku.logger.Log;
-import edu.umich.si.inteco.minuku.manager.MinukuDAOManager;
 import edu.umich.si.inteco.minuku.manager.MinukuSituationManager;
 import edu.umich.si.inteco.minuku.model.UserSubmissionStats;
 import edu.umich.si.inteco.minuku_2.event.MissedReportsActionEvent;
 import edu.umich.si.inteco.minuku_2.manager.InstanceManager;
 import edu.umich.si.inteco.minuku_2.model.DiabetesLogDataRecord;
-import edu.umich.si.inteco.minukucore.dao.DAOException;
 import edu.umich.si.inteco.minukucore.event.ActionEvent;
 import edu.umich.si.inteco.minukucore.event.MinukuEvent;
 import edu.umich.si.inteco.minukucore.event.NoDataChangeEvent;
@@ -67,10 +64,10 @@ public class MissedReportsSituation implements Situation {
 
     @Override
     public <T extends ActionEvent> T assertSituation(StreamSnapshot snapshot, MinukuEvent aMinukuEvent) {
-        Log.d(TAG, "The type of minuku event received is:" + aMinukuEvent.getType().getSimpleName() );
-        if(!aMinukuEvent.getType().equals(DiabetesLogDataRecord.class)) {
+        Log.d(TAG, "The type of minuku event received is:" + aMinukuEvent.getStreamSourceClass().getSimpleName() );
+        if(!aMinukuEvent.getStreamSourceClass().equals(DiabetesLogDataRecord.class)) {
             Log.e(TAG, "Something is fu**ed up. Expected type :" +
-                    " DiabetesLogDataRecord , Received:" + aMinukuEvent.getType() );
+                    " DiabetesLogDataRecord , Received:" + aMinukuEvent.getStreamSourceClass() );
         }
         List<DataRecord> dataRecords = new ArrayList<>();
         dataRecords.add(snapshot.getCurrentValue(DiabetesLogDataRecord.class));

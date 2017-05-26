@@ -11,12 +11,10 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
 
 import edu.umich.si.inteco.minuku.config.Constants;
 import edu.umich.si.inteco.minuku.config.UserPreferences;
 import edu.umich.si.inteco.minuku.logger.Log;
-import edu.umich.si.inteco.minuku_2.EODQuestionsActivity;
 import edu.umich.si.inteco.minuku_2.R;
 import edu.umich.si.inteco.minuku_2.preferences.ApplicationConstants;
 import edu.umich.si.inteco.minuku_2.preferences.TimePreference;
@@ -86,7 +84,7 @@ public class DiaryNotificationService extends Service {
                     new ShowNotificationEventBuilder()
                             .setExpirationAction(ShowNotificationEvent.ExpirationAction.DISMISS)
                             .setExpirationTimeSeconds(Constants.DIARY_NOTIFICATION_EXPIRATION_TIME)
-                            .setViewToShow(EODQuestionsActivity.class)
+                            //.setViewToShow(EODQuestionsActivity.class)
                             .setIconID(R.drawable.self_reflection)
                             .setTitle(Constants.EOD_DIARY_PROMPT_TITLE)
                             .setCategory(ApplicationConstants.NOTIFICATION_CATEGORY_EOD_DIARY)

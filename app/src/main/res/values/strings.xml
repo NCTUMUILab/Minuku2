@@ -21,7 +21,10 @@
   -->
 
 <resources>
-    <string name="app_name">DReflect</string>
+    <!--  current_task: PART ESM CAR Ohio  -->
+    <string name="current_task">ESM</string>
+
+    <string name="app_name">pseudoMinuku2</string>
     <string name="ok">OK</string>
     <string name="permission_location_rationale">The app needs location for context</string>
     <string name="squarecamera__app_name">Minuku</string>
