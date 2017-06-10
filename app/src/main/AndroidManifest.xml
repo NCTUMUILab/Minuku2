@@ -81,7 +81,7 @@
                 android:value=".LoginActivity" />-->
         </activity>
 
-        <activity android:name=".MoodDataRecordActivity"
+        <!--activity android:name=".MoodDataRecordActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -135,18 +135,18 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
-        </activity>
+        </activity-->
 
 
         <!-- Login and create account related stuff - anything that happens before primary screen -->
-        <activity android:name=".LoginActivity">
+        <!--activity android:name=".LoginActivity">
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity-->
 
-        <activity
+        <!--activity
             android:name=".CreateAccountActivity"
             android:label="@string/title_activity_create_account"
             android:parentActivityName=".LoginActivity">
@@ -162,7 +162,7 @@
 
         <activity android:name=".PromptMissedDataQuesttionaireActivity"
             android:label="DReflect"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity"></activity-->
 
         <!-- Activities included from third party libraries -->
         <activity android:name="com.desmond.squarecamera.CameraActivity" />

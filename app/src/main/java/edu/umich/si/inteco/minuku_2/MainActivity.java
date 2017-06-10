@@ -64,7 +64,7 @@ import edu.umich.si.inteco.minuku_2.service.MainService;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String LOG_TAG = "MainActivity";
+    private static final String TAG = "MainActivity";
     //private TextView compensationMessage;
     private AtomicInteger loadingProcessCount = new AtomicInteger(0);
     private ProgressDialog loadingProgressDialog;
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOG_TAG, "Creating Main activity");
+        Log.d(TAG, "Creating Main activity");
 
 
         setContentView(R.layout.activity_main);
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             startServiceWork();
         }
 
-        Log.e(LOG_TAG,"start");
+        Log.e(TAG,"start");
 
         final LayoutInflater mInflater = getLayoutInflater().from(this);
         timerview = mInflater.inflate(R.layout.home, null);
@@ -317,9 +317,9 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void assertEligibilityAndPopulateCompensationMessage(
             UserSubmissionStats userSubmissionStats) {
-        Log.d(LOG_TAG, "Attempting to update compesnation message");
+        Log.d(TAG, "Attempting to update compesnation message");
         if(userSubmissionStats != null && isEligibleForReward(userSubmissionStats)) {
-            Log.d(LOG_TAG, "populating the compensation message");
+            Log.d(TAG, "populating the compensation message");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -343,13 +343,13 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void incrementLoadingProcessCount(IncrementLoadingProcessCountEvent event) {
         Integer loadingCount = loadingProcessCount.incrementAndGet();
-        Log.d(LOG_TAG, "Incrementing loading processes count: " + loadingCount);
+        Log.d(TAG, "Incrementing loading processes count: " + loadingCount);
     }
 
     @Subscribe
     public void decrementLoadingProcessCountEvent(DecrementLoadingProcessCountEvent event) {
         Integer loadingCount = loadingProcessCount.decrementAndGet();
-        Log.d(LOG_TAG, "Decrementing loading processes count: " + loadingCount);
+        Log.d(TAG, "Decrementing loading processes count: " + loadingCount);
         //maybeRemoveProgressDialog(loadingCount);
     }
     // because of loadingProgressDialog

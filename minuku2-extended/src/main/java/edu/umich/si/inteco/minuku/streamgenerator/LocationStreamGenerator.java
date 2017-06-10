@@ -75,6 +75,8 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
 
     LocationDataRecordDAO mDAO;
 
+    public static LocationDataRecord toCheckFamiliarOrNotLocationDataRecord;
+
     public LocationStreamGenerator(Context applicationContext) {
         super(applicationContext);
         this.mStream = new LocationStream(Constants.LOCATION_QUEUE_SIZE);
@@ -158,6 +160,8 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         LocationDataRecord locationDataRecord = new LocationDataRecord(
                 (float)latitude.get(),
                 (float)longitude.get());
+        Log.e(TAG,"latitude : "+latitude.get()+"longitude : "+longitude.get());
+        toCheckFamiliarOrNotLocationDataRecord = locationDataRecord;
         mStream.add(locationDataRecord);
         Log.d(TAG, "Location to be sent to event bus" + locationDataRecord);
 

@@ -121,7 +121,7 @@ public class Constants {
     public static final String SELECTED_LOCATIONS = "USERPREF_SELECTED_LOCATIONS";
     public static final String BUNDLE_KEY_FOR_QUESTIONNAIRE_ID = "QUESTIONNAIRE_ID";
     public static final String BUNDLE_KEY_FOR_NOTIFICATION_SOURCE = "NOTIFICATION_SOURCE";
-    public static final String APP_NAME = "DReflect";
+    public static final String APP_NAME = "Minuku2";
     public static final String RUNNING_APP_DECLARATION = APP_NAME + " is running in the background";
     public static final long INTERNAL_LOCATION_UPDATE_FREQUENCY = 1 * 300 * 1000;
     public static final float LOCATION_MINUMUM_DISPLACEMENT_UPDATE_THRESHOLD = 50 ;

@@ -40,6 +40,7 @@ import edu.umich.si.inteco.minuku.dao.MoodDataRecordDAO;
 import edu.umich.si.inteco.minuku.dao.MultipleChoiceQuestionDAO;
 import edu.umich.si.inteco.minuku.dao.NotificationDAO;
 import edu.umich.si.inteco.minuku.dao.SemanticLocationDataRecordDAO;
+import edu.umich.si.inteco.minuku.dao.TransportationModeDAO;
 import edu.umich.si.inteco.minuku.dao.UserSubmissionStatsDAO;
 import edu.umich.si.inteco.minuku.event.DecrementLoadingProcessCountEvent;
 import edu.umich.si.inteco.minuku.event.IncrementLoadingProcessCountEvent;
@@ -55,9 +56,11 @@ import edu.umich.si.inteco.minuku.model.UserSubmissionStats;
 import edu.umich.si.inteco.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.LocationStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.TransportationModeStreamGenerator;
+import edu.umich.si.inteco.minuku_2.dao.CheckFamiliarOrNotDAO;
 import edu.umich.si.inteco.minuku_2.dao.DiabetesLogDAO;
 import edu.umich.si.inteco.minuku_2.dao.PromptMissedReportsQnADAO;
 import edu.umich.si.inteco.minuku_2.dao.TimelinePatchDataRecordDAO;
+import edu.umich.si.inteco.minuku_2.model.CheckFamiliarOrNotDataRecord;
 import edu.umich.si.inteco.minuku_2.model.DiabetesLogDataRecord;
 import edu.umich.si.inteco.minuku_2.model.PromptMissedReportsQnADataRecord;
 import edu.umich.si.inteco.minuku_2.model.TimelinePatchDataRecord;
@@ -149,8 +152,11 @@ public class InstanceManager {
         ActivityRecognitionDataRecordDAO activityRecognitionDataRecordDAO = new ActivityRecognitionDataRecordDAO();
         daoManager.registerDaoFor(ActivityRecognitionDataRecord.class, activityRecognitionDataRecordDAO);
 
-        TransportationModeDataRecord transportationModeDataRecord = new TransportationModeDataRecord();
-        daoManager.registerDaoFor(ActivityRecognitionDataRecord.class, activityRecognitionDataRecordDAO);
+        TransportationModeDAO transportationModeDAO = new TransportationModeDAO();
+        daoManager.registerDaoFor(TransportationModeDataRecord.class, transportationModeDAO);
+
+        CheckFamiliarOrNotDAO checkFamiliarOrNotDAO = new CheckFamiliarOrNotDAO(getApplicationContext());
+        daoManager.registerDaoFor(CheckFamiliarOrNotDataRecord.class,checkFamiliarOrNotDAO);
 
 
         // Create corresponding stream generators. Only to be created once in Main Activity
@@ -175,6 +181,8 @@ public class InstanceManager {
         TransportationModeStreamGenerator transportationModeStreamGenerator =
                 new TransportationModeStreamGenerator(getApplicationContext());
 
+        //CheckFamiliarOrNotStreamGenerator checkFamiliarOrNotStreamGenerator =
+        //        new CheckFamiliarOrNotStreamGenerator(getApplicationContext());
 
         // All situations must be registered AFTER the stream generators are registers.
         MinukuSituationManager situationManager = MinukuSituationManager.getInstance();
@@ -185,7 +193,9 @@ public class InstanceManager {
         MissedReportsSituation missedReportsSituation = new MissedReportsSituation(getApplicationContext());
         MissedReportsAction missedReportsAction = new MissedReportsAction();*/
 
-
+        //TODO additional function
+        //for testing to trigger qualtrics
+        //QuestionnaireManager questionnaireManager = new QuestionnaireManager(getApplicationContext());
 
         //create questionnaires
         QuestionConfig.getInstance().setUpQuestions(getApplicationContext());

@@ -22,11 +22,9 @@ import java.util.List;
 import java.util.TimeZone;
 
 import edu.umich.si.inteco.minuku.config.Constants;
+import edu.umich.si.inteco.minuku.dao.ActivityRecognitionDataRecordDAO;
 import edu.umich.si.inteco.minuku.manager.MinukuDAOManager;
 import edu.umich.si.inteco.minuku.manager.MinukuStreamManager;
-import edu.umich.si.inteco.minuku.streamgenerator.AndroidStreamGenerator;
-import edu.umich.si.inteco.minuku.config.Constants;
-import edu.umich.si.inteco.minuku.dao.ActivityRecognitionDataRecordDAO;
 import edu.umich.si.inteco.minuku.model.ActivityRecognitionDataRecord;
 import edu.umich.si.inteco.minuku.service.ActivityRecognitionService;
 import edu.umich.si.inteco.minuku.stream.ActivityRecognitionStream;
@@ -81,7 +79,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
     public static long ACTIVITY_RECOGNITION_DEFAULT_UPDATE_INTERVAL =
             ACTIVITY_RECOGNITION_DEFAULT_UPDATE_INTERVAL_IN_SECONDS * Constants.MILLISECONDS_PER_SECOND;
 
-    protected static ArrayList<ActivityRecognitionDataRecord> mLocalRecordPool;
+    public static ArrayList<ActivityRecognitionDataRecord> mLocalRecordPool;
 
     public ActivityRecognitionStreamGenerator(Context applicationContext) { //,Context mContext
         super(applicationContext);
@@ -90,6 +88,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         this.mStream = new ActivityRecognitionStream(Constants.LOCATION_QUEUE_SIZE);
         this.mDAO = MinukuDAOManager.getInstance().getDaoFor(ActivityRecognitionDataRecord.class);
 
+        mLocalRecordPool = new ArrayList<ActivityRecognitionDataRecord>();
         recordCount = 0;
         sKeepalive = KEEPALIVE_MINUTE * Constants.MILLISECONDS_PER_MINUTE;
 
@@ -289,8 +288,9 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         Log.e(TAG,detectedtime+"||"+ mostProbableActivity);
 
 
-        // isRequested
-        saveRecordToLocalRecordPool();
+        // Assume isRequested.
+        if(probableActivities!=null&&mostProbableActivity!=null)
+            saveRecordToLocalRecordPool();
 
 
     }
@@ -299,8 +299,6 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         /** create a Record to save timestamp, session it belongs to, and Data**/
         ActivityRecognitionDataRecord record = new ActivityRecognitionDataRecord();
         record.setProbableActivities(sProbableActivities);
-
-        Log.d(TAG, "testing saving records at " + record.getTimeString() + " data: " + record.getData());
 
         JSONObject data = new JSONObject();
 
@@ -324,17 +322,23 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         /**we set data in Record**/
         record.setData(data);
         record.setTimestamp(sLatestDetectionTime);
-        addRecord(record);
-    }
 
+        Log.d(TAG, "testing saving records at " + record.getTimeString() + " data: " + record.getData());
+
+        addRecord(record);
+
+    }
+    //TODO not work
     protected void addRecord(ActivityRecognitionDataRecord activityRecognitionDataRecord) {
 
         /**1. add record to the local pool **/
         long id = recordCount++;
         activityRecognitionDataRecord.setID(id);
 
+        Log.e(TAG, String.valueOf(mLocalRecordPool));
         mLocalRecordPool.add(activityRecognitionDataRecord);
-//        Log.d(LOG_TAG, "[test logging]add record " + record.getSourceType() +record.getID() + "logged at " + record.getTimeString() + " to " + this.getName() );
+        Log.e(TAG, "[test logging]add record " + "logged at " + activityRecognitionDataRecord.getTimeString() );
+        //Log.e(TAG, String.valueOf(mLocalRecordPool.size()));
 
         /**2. check whether we should remove old record **/
         removeOutDatedRecord();
@@ -358,7 +362,7 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
             if (diff >= sKeepalive){
                 mLocalRecordPool.remove(record);
                 //Log.d(TAG, "[test logging]remove record " + record.getSource() + record.getID() + " logged at " + record.getTimeString() + " to " + this.getName());
-
+                Log.e(TAG,"sKeepalive");
                 i--;
             }
         }
@@ -371,12 +375,15 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
 
     public static ActivityRecognitionDataRecord getLastSavedRecord(){
         if(mLocalRecordPool==null){
+            //Log.e("getLastSavedRecord","null");
             return null;
         }
         if (mLocalRecordPool.size()>0)
             return mLocalRecordPool.get(mLocalRecordPool.size()-1);
-        else
+        else{
+            Log.e("getLastSavedRecord","mLocalRecordPool.size()<0");
             return null;
+        }
     }
 
     /**get the current time in milliseconds**/

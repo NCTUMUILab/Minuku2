@@ -124,11 +124,13 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     public static final int BACKGROUND_RECORDING_INITIAL_DELAY = 0;
 
 
-    public TransportationModeStreamGenerator(Context applicationContext) { //,Context mContext
+    public TransportationModeStreamGenerator(Context applicationContext) {
         super(applicationContext);
         this.mContext = applicationContext;
         this.mStream = new TransportationModeStream(Constants.LOCATION_QUEUE_SIZE);
         this.mDAO = MinukuDAOManager.getInstance().getDaoFor(TransportationModeDataRecord.class);
+
+        //this.activityRecognitionStreamGenerator = activityRecognitionStreamGenerator;
 
         mScheduledExecutorService = Executors.newScheduledThreadPool(TransportationMode_REFRESH_FREQUENCY);
 
@@ -199,11 +201,14 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     Runnable TransportationModeRunnable = new Runnable() {
         @Override
         public void run() {
+
+            //Log.e(TAG, String.valueOf(activityRecognitionStreamGenerator.getLastSavedRecord()));
+
             if (getLastSavedRecord()!=null) { //maybe need to judge Location's record even "getLastSavedRecord()!=null" ?
                 ActivityRecognitionDataRecord recordPool = getLastSavedRecord();
                 if (recordPool!=null) {
                     examineTransportation(recordPool);
-                    Log.d(TAG, "[testactivitylog] transportation: " + getConfirmedActvitiyString());
+                    Log.e(TAG, "[testactivitylog] transportation: " + getConfirmedActvitiyString());
                 }
             }
             else
