@@ -181,6 +181,9 @@ public class InstanceManager {
         TransportationModeStreamGenerator transportationModeStreamGenerator =
                 new TransportationModeStreamGenerator(getApplicationContext());
 
+        //ArmuroStreamGenerator armuroStreamGenerator =
+         //       new ArmuroStreamGenerator();
+
         //CheckFamiliarOrNotStreamGenerator checkFamiliarOrNotStreamGenerator =
         //        new CheckFamiliarOrNotStreamGenerator(getApplicationContext());
 
