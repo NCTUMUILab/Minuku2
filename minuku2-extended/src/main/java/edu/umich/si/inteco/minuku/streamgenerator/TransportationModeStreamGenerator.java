@@ -123,6 +123,9 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     public static final int TransportationMode_REFRESH_FREQUENCY = 10; //1s, 1000ms
     public static final int BACKGROUND_RECORDING_INITIAL_DELAY = 0;
 
+    public static TransportationModeDataRecord toCheckFamiliarOrNotTransportationModeDataRecord;
+
+    //TransportationModeDataRecord transportationModeDataRecord;
 
     public TransportationModeStreamGenerator(Context applicationContext) {
         super(applicationContext);
@@ -131,6 +134,8 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
         this.mDAO = MinukuDAOManager.getInstance().getDaoFor(TransportationModeDataRecord.class);
 
         //this.activityRecognitionStreamGenerator = activityRecognitionStreamGenerator;
+
+        //transportationModeDataRecord = new TransportationModeDataRecord();
 
         mScheduledExecutorService = Executors.newScheduledThreadPool(TransportationMode_REFRESH_FREQUENCY);
 
@@ -158,6 +163,9 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     public boolean updateStream() {
         TransportationModeDataRecord transportationModeDataRecord =
                 new TransportationModeDataRecord(getConfirmedActvitiyString()); //TODO put data inside.
+
+        toCheckFamiliarOrNotTransportationModeDataRecord = transportationModeDataRecord;
+
         mStream.add(transportationModeDataRecord);
         Log.d(TAG, "TransportationMode to be sent to event bus" + transportationModeDataRecord);
         // also post an event.
@@ -209,6 +217,9 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
                 if (recordPool!=null) {
                     examineTransportation(recordPool);
                     Log.e(TAG, "[testactivitylog] transportation: " + getConfirmedActvitiyString());
+                    //transportationModeDataRecord =
+                    //       new TransportationModeDataRecord(getActivityNameFromType(examineTransportation(recordPool)));//;getConfirmedActvitiyString()
+
                 }
             }
             else

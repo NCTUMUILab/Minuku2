@@ -28,6 +28,7 @@ import edu.umich.si.inteco.minuku.manager.MinukuDAOManager;
 import edu.umich.si.inteco.minuku.manager.MinukuStreamManager;
 import edu.umich.si.inteco.minuku.streamgenerator.AndroidStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.LocationStreamGenerator;
+import edu.umich.si.inteco.minuku.streamgenerator.TransportationModeStreamGenerator;
 import edu.umich.si.inteco.minuku_2.R;
 import edu.umich.si.inteco.minuku_2.dao.CheckFamiliarOrNotDAO;
 import edu.umich.si.inteco.minuku_2.model.CheckFamiliarOrNotDataRecord;
@@ -36,6 +37,8 @@ import edu.umich.si.inteco.minukucore.dao.DAOException;
 import edu.umich.si.inteco.minukucore.exception.StreamAlreadyExistsException;
 import edu.umich.si.inteco.minukucore.exception.StreamNotFoundException;
 import edu.umich.si.inteco.minukucore.stream.Stream;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by Lawrence on 2017/6/5.
@@ -56,6 +59,8 @@ public class CheckFamiliarOrNotStreamGenerator extends AndroidStreamGenerator<Ch
     private int home = 0;
     private int neighbor = 0;
     private int outside = 0;
+
+    private int notifyID=1;
 
     private final String link = "https://qtrial2017q2az1.az1.qualtrics.com/jfe/form/SV_0VA9kDhoEeWHuYd";
     private String NotificationText = "Please click to fill the questionnaire";
@@ -146,27 +151,11 @@ public class CheckFamiliarOrNotStreamGenerator extends AndroidStreamGenerator<Ch
                 Log.e(TAG,"IOException");
                 e.printStackTrace();
             }
-/*
-            Random rand = new Random();
-            int n = rand.nextInt(100) + 1;
-            if(n>=1&&n<=60) {
-                home = 1;
-                neighbor = 0;
-                outside = 0;
-            }else if(n>=61&&n<=80){
-                home = 0;
-                neighbor = 1;
-                outside = 0;
-            }else{
-                home = 0;
-                neighbor = 0;
-                outside = 1;
-            }
-*/
+
             //get latitude and longitude from LocationStreamGenerator
             latitude = LocationStreamGenerator.toCheckFamiliarOrNotLocationDataRecord.getLatitude();
             longitude = LocationStreamGenerator.toCheckFamiliarOrNotLocationDataRecord.getLongitude();
-            Log.e(TAG,"latitude : "+latitude+" longitude : "+longitude);
+            Log.e(TAG+" testing server","latitude : "+latitude+" longitude : "+longitude);
 
             int userid = 6;
 
@@ -174,7 +163,9 @@ public class CheckFamiliarOrNotStreamGenerator extends AndroidStreamGenerator<Ch
             String mcog = "http://mcog.asc.ohio-state.edu/apps/pip?" +
                     "lon="+String.valueOf(longitude) +
                     "&lat="+String.valueOf(latitude) +
-                    "&userid=6&format=json";
+                    "&userid=6" +
+                  //  "&tsphone=1496684077&pdop=10.2" +
+                    "&format=json";
             try{
                 JSONObject json = readJsonFromUrl(mcog);
                 Log.d(TAG,json.toString());
@@ -215,27 +206,49 @@ public class CheckFamiliarOrNotStreamGenerator extends AndroidStreamGenerator<Ch
     };
 
     private void triggerQualtrics(){
+
+        Log.e(TAG,"triggerQualtrics");
+
+        String inhomeornot="not working yet";
+        if(home==1)
+            inhomeornot = "at home";
+        else if(neighbor==1)
+            inhomeornot = "at neighbor";
+        else if(outside==1)
+            inhomeornot = "at outside";
+
+        NotificationText = "Transportation Mode: " + TransportationModeStreamGenerator.toCheckFamiliarOrNotTransportationModeDataRecord.getConfirmedActivityType()
+                +"\r\n"+"Is_home: "+inhomeornot;
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);//Context.
+
+        final Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
+        bigTextStyle.setBigContentTitle("Minuku2");
+        bigTextStyle.bigText(NotificationText);
+
         Notification.Builder note  = new Notification.Builder(mContext)
                 .setContentTitle(Constants.APP_NAME)
                 .setContentText(NotificationText)
+                .setStyle(bigTextStyle)
                 .setSmallIcon(R.drawable.self_reflection)
                 .setAutoCancel(true);
         //note.flags |= Notification.FLAG_NO_CLEAR;
         //startForeground( 42, note );
 
-        NotificationManager mNotificationManager =
-                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-
         // pending implicit intent to view url
         Intent resultIntent = new Intent(Intent.ACTION_VIEW);
         resultIntent.setData(Uri.parse(link));
 
-        PendingIntent pending = PendingIntent.getActivity(mContext, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pending = PendingIntent.getActivity(mContext, 0, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         note.setContentIntent(pending);
 
         // using the same tag and Id causes the new notification to replace an existing one
-        mNotificationManager.notify(String.valueOf(System.currentTimeMillis()), 0, note.build());
+        mNotificationManager.notify(notifyID, note.build()); //String.valueOf(System.currentTimeMillis()),
+        note.build().flags = Notification.FLAG_AUTO_CANCEL;
 
+        //note.setContentText(NotificationText);
+        //mNotificationManager.notify(String.valueOf(System.currentTimeMillis()), 1, note.build());
     }
 
     @Override

@@ -65,6 +65,7 @@ import edu.umich.si.inteco.minuku_2.model.DiabetesLogDataRecord;
 import edu.umich.si.inteco.minuku_2.model.PromptMissedReportsQnADataRecord;
 import edu.umich.si.inteco.minuku_2.model.TimelinePatchDataRecord;
 import edu.umich.si.inteco.minuku_2.question.QuestionConfig;
+import edu.umich.si.inteco.minuku_2.streamgenerator.CheckFamiliarOrNotStreamGenerator;
 import edu.umich.si.inteco.minukucore.event.ShowNotificationEvent;
 import edu.umich.si.inteco.minukucore.model.question.FreeResponse;
 import edu.umich.si.inteco.minukucore.model.question.MultipleChoice;
@@ -184,8 +185,8 @@ public class InstanceManager {
         //ArmuroStreamGenerator armuroStreamGenerator =
          //       new ArmuroStreamGenerator();
 
-        //CheckFamiliarOrNotStreamGenerator checkFamiliarOrNotStreamGenerator =
-        //        new CheckFamiliarOrNotStreamGenerator(getApplicationContext());
+        CheckFamiliarOrNotStreamGenerator checkFamiliarOrNotStreamGenerator =
+                new CheckFamiliarOrNotStreamGenerator(getApplicationContext());
 
         // All situations must be registered AFTER the stream generators are registers.
         MinukuSituationManager situationManager = MinukuSituationManager.getInstance();

@@ -23,7 +23,6 @@
 package edu.umich.si.inteco.minuku_2.service;
 
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
@@ -32,7 +31,6 @@ import android.os.IBinder;
 import edu.umich.si.inteco.minuku.config.Constants;
 import edu.umich.si.inteco.minuku.logger.Log;
 import edu.umich.si.inteco.minuku.manager.MinukuStreamManager;
-import edu.umich.si.inteco.minuku_2.R;
 
 public class BackgroundService extends Service {
 
@@ -53,7 +51,7 @@ public class BackgroundService extends Service {
                 System.currentTimeMillis() + Constants.PROMPT_SERVICE_REPEAT_MILLISECONDS,
                 PendingIntent.getService(this, 0, new Intent(this, BackgroundService.class), 0)
         );
-
+/*
         Notification note  = new Notification.Builder(getBaseContext())
                 .setContentTitle(Constants.APP_NAME)
                 .setContentText(Constants.RUNNING_APP_DECLARATION)
@@ -62,7 +60,7 @@ public class BackgroundService extends Service {
                 .build();
         note.flags |= Notification.FLAG_NO_CLEAR;
         startForeground( 42, note );
-
+*/
         return START_STICKY_COMPATIBILITY;
     }
 

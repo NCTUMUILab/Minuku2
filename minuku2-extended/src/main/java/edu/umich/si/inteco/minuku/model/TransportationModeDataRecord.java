@@ -24,4 +24,12 @@ public class TransportationModeDataRecord implements DataRecord{
     public long getCreationTime() {
         return creationTime;
     }
+
+    public String getConfirmedActivityType(){
+        return ConfirmedActivityType;
+    }
+
+    public void setConfirmedActivityType(String ConfirmedActivityType){
+        this.ConfirmedActivityType=ConfirmedActivityType;
+    }
 }

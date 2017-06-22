@@ -41,7 +41,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
@@ -55,12 +57,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import edu.umich.si.inteco.minuku.event.DecrementLoadingProcessCountEvent;
 import edu.umich.si.inteco.minuku.event.IncrementLoadingProcessCountEvent;
 import edu.umich.si.inteco.minuku.logger.Log;
-import edu.umich.si.inteco.minuku.manager.MinukuNotificationManager;
 import edu.umich.si.inteco.minuku_2.controller.home;
 import edu.umich.si.inteco.minuku_2.controller.report;
 import edu.umich.si.inteco.minuku_2.manager.InstanceManager;
 import edu.umich.si.inteco.minuku_2.service.BackgroundService;
-import edu.umich.si.inteco.minuku_2.service.MainService;
+import edu.umich.si.inteco.minuku_2.service.CheckFamiliarOrNotService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -69,28 +70,24 @@ public class MainActivity extends AppCompatActivity {
     private AtomicInteger loadingProcessCount = new AtomicInteger(0);
     private ProgressDialog loadingProgressDialog;
 
-
     private int mYear, mMonth, mDay;
 
     public static String task="PART"; //default is PART
     ArrayList viewList;
     public final int REQUEST_ID_MULTIPLE_PERMISSIONS=1;
-    public static View timerview,recordview;
+    public static View timerview,recordview,deviceIdview;
 
     public static android.support.design.widget.TabLayout mTabs;
     public static ViewPager mViewPager;
+    private TextView device_id;
+    private Button please_start_service;
+    private String projName = "Ohio";
     //private UserSubmissionStats mUserSubmissionStats;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Creating Main activity");
-
-
-        setContentView(R.layout.activity_main);
-        //compensationMessage = (TextView) findViewById(R.id.compensation_message);
-
-        //initializeActionList();
 
         int sdk_int = Build.VERSION.SDK_INT;
         if(sdk_int>=23) {
@@ -99,25 +96,33 @@ public class MainActivity extends AppCompatActivity {
             startServiceWork();
         }
 
+        //compensationMessage = (TextView) findViewById(R.id.compensation_message);
+
+        //initializeActionList();
+
+
         Log.e(TAG,"start");
+
+        setContentView(R.layout.activity_main);
 
         final LayoutInflater mInflater = getLayoutInflater().from(this);
         timerview = mInflater.inflate(R.layout.home, null);
         recordview = mInflater.inflate(R.layout.record, null);
 
-        startService(new Intent(getBaseContext(), BackgroundService.class));
-        startService(new Intent(getBaseContext(), MinukuNotificationManager.class));
-        //startService(new Intent(getBaseContext(), DiaryNotificationService.class)); /* might be useless for us */
-
-
         initViewPager(timerview,recordview);
 
         SettingViewPager();
 
+        //whichView(projName);
+
+        startService(new Intent(getBaseContext(), BackgroundService.class));
+        //startService(new Intent(getBaseContext(), MinukuNotificationManager.class));
+        //startService(new Intent(getBaseContext(), DiaryNotificationService.class)); /* might be useless for us */
+
         //UUID dummyUUID = UUID.randomUUID();
         EventBus.getDefault().register(this);
 
-        startService(new Intent(getBaseContext(), MainService.class));
+        //startService(new Intent(getBaseContext(), CheckFamiliarOrNotService.class));
 
 
         Context mContext = this;
@@ -128,7 +133,32 @@ public class MainActivity extends AppCompatActivity {
 
             //loadingProgressDialog = ProgressDialog.show(MainActivity.this, "Loading data", "Fetching information",true);
        }
+
+
     }
+
+    private void whichView(String projName){
+        if(projName.equals("mobilecrowdsourcing")){
+            setContentView(R.layout.activity_main);
+
+            final LayoutInflater mInflater = getLayoutInflater().from(this);
+            timerview = mInflater.inflate(R.layout.home, null);
+            recordview = mInflater.inflate(R.layout.record, null);
+
+            initViewPager(timerview,recordview);
+
+            SettingViewPager();
+        }else if(projName.equals("Ohio")){
+
+            setContentView(R.layout.onlydeviceid);
+
+            device_id=(TextView)findViewById(R.id.deviceid);
+            //device_id.setText("ID = "+Constant.DEVICE_ID);
+
+        }
+
+    }
+
 
     //public for update
     public void initViewPager(View timerview, View recordview){
@@ -235,6 +265,9 @@ public class MainActivity extends AppCompatActivity {
         if(permissionStatus==PackageManager.PERMISSION_GRANTED){
             Constant.DEVICE_ID = mngr.getDeviceId();
 
+            if(projName.equals("Ohio"))
+                device_id.setText("ID = "+Constant.DEVICE_ID);
+
             //TODO where should we place DEVICE_ID ?
 
             //device_id=(TextView)findViewById(R.id.deviceid);
@@ -250,10 +283,10 @@ public class MainActivity extends AppCompatActivity {
 
         //Use service to catch user's log, GPS, activity;
         //TODO Bootcomplete 復原
-        if (!MainService.isServiceRunning()){
-            android.util.Log.d("MainActivity", "[test service running]  going start the probe service isServiceRunning:" + MainService.isServiceRunning());
+        if (!CheckFamiliarOrNotService.isServiceRunning()){
+            android.util.Log.d("MainActivity", "[test service running]  going start the probe service isServiceRunning:" + CheckFamiliarOrNotService.isServiceRunning());
             Intent intent = new Intent();
-            intent.setClass(MainActivity.this, MainService.class);
+            intent.setClass(MainActivity.this, CheckFamiliarOrNotService.class);
 
             startService(intent);
         }

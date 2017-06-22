@@ -16,9 +16,9 @@ import static edu.umich.si.inteco.minuku_2.MainActivity.task;
  * Created by Lawrence on 2017/4/23.
  */
 
-public class MainService extends Service {
+public class CheckFamiliarOrNotService extends Service {
 
-    final private String LOG_TAG = "MainService";
+    final private String LOG_TAG = "CheckFamiliarOrNotService";
 
     //public ContextManager mContextManager; //TODO might be removed for the new logic in this code.
     private static Context serviceInstance = null;
@@ -32,11 +32,11 @@ public class MainService extends Service {
         return null;
     }
 
-    public MainService(){}
+    public CheckFamiliarOrNotService(){}
 
     public void onCreate(){
         super.onCreate();
-        Log.d("MainService", "onCreate");
+        Log.d("CheckFamiliarOrNotService", "onCreate");
 
         //mode = Mode.setMode(2);
         /*** determine what task is now ***/
@@ -50,24 +50,24 @@ public class MainService extends Service {
 
     }
 
-    public static Context setMainService(){
+    public static Context setCheckFamiliarOrNotService(){
         return serviceInstance;
     }
 
     public static Context getInstance() {
-        if(MainService.serviceInstance == null) {
+        if(CheckFamiliarOrNotService.serviceInstance == null) {
             try {
-                MainService.serviceInstance = new MainService();
+                CheckFamiliarOrNotService.serviceInstance = new CheckFamiliarOrNotService();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return MainService.serviceInstance;
+        return CheckFamiliarOrNotService.serviceInstance;
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        Log.d("MainService", "[test service running] going to start the probe service, isServiceRunning:  " + isServiceRunning());
+        Log.d("CheckFamiliarOrNotService", "[test service running] going to start the probe service, isServiceRunning:  " + isServiceRunning());
 
         startService();
 
