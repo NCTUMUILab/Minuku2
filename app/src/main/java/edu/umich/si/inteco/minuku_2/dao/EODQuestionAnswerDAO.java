@@ -1,9 +1,5 @@
 package edu.umich.si.inteco.minuku_2.dao;
 
-import com.firebase.client.Firebase;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
@@ -38,10 +34,12 @@ public class EODQuestionAnswerDAO implements DAO<EODQuestionDataRecord> {
     @Override
     public void add(EODQuestionDataRecord entity) throws DAOException {
         Log.d(TAG, "Adding EOD question answer record.");
+        /*
         Firebase dataRecordListRef = new Firebase(Constants.FIREBASE_URL_EOD_QUESTION_ANSWER)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
         dataRecordListRef.push().setValue(entity);
+        */
     }
 
     @Override

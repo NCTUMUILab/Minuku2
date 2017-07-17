@@ -23,19 +23,11 @@
 package edu.umich.si.inteco.minuku.dao;
 
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.common.util.concurrent.SettableFuture;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
@@ -85,6 +77,7 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
     public Future<List<LocationDataRecord>> getAll() throws DAOException {
         final SettableFuture<List<LocationDataRecord>> settableFuture =
                 SettableFuture.create();
+        /*
         Firebase locationListRef = new Firebase(Constants.FIREBASE_URL_LOCATION)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
@@ -103,12 +96,14 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
                 settableFuture.set(null);
             }
         });
+        */
         return settableFuture;
     }
 
     @Override
     public Future<List<LocationDataRecord>> getLast(int N) throws DAOException {
         final SettableFuture<List<LocationDataRecord>> settableFuture = SettableFuture.create();
+        /*
         final Date today = new Date();
 
         final List<LocationDataRecord> lastNRecords = Collections.synchronizedList(
@@ -119,7 +114,7 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
                 today,
                 lastNRecords,
                 settableFuture);
-
+*/
         return settableFuture;
     }
 

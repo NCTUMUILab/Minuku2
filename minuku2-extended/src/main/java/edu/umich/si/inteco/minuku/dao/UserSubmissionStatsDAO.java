@@ -23,14 +23,8 @@
 package edu.umich.si.inteco.minuku.dao;
 
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.common.util.concurrent.SettableFuture;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
@@ -84,14 +78,17 @@ public class UserSubmissionStatsDAO implements DAO<UserSubmissionStats> {
     public void update(UserSubmissionStats oldEntity, UserSubmissionStats newEntity)
             throws DAOException {
         Log.d(TAG, "Adding note data record.");
+        /*
         Firebase userStatsRef = new Firebase(Constants.FIREBASE_URL_USER_SUBMISSION_STATS)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
         userStatsRef.setValue(newEntity);
+        */
     }
 
     public Future<UserSubmissionStats> get() {
         final SettableFuture<UserSubmissionStats> future = SettableFuture.create();
+        /*
         if (myUserEmail != null) {
             Firebase userStatsRef = new Firebase(Constants.FIREBASE_URL_USER_SUBMISSION_STATS)
                     .child(myUserEmail)
@@ -114,6 +111,7 @@ public class UserSubmissionStatsDAO implements DAO<UserSubmissionStats> {
                 }
             });
         }
+        */
         return future;
     }
 }

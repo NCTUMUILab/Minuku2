@@ -1,14 +1,7 @@
 package edu.umich.si.inteco.minuku_2.dao;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.common.util.concurrent.SettableFuture;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -44,10 +37,12 @@ public class DiabetesLogDAO implements DAO<DiabetesLogDataRecord> {
     @Override
     public void add(DiabetesLogDataRecord entity) throws DAOException {
         Log.d(TAG, "Adding diabetes log data record.");
+        /*
         Firebase dataRecordListRef = new Firebase(Constants.FIREBASE_URL_DIABETESLOG)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
         dataRecordListRef.push().setValue(entity);
+        */
     }
 
     @Override
@@ -59,6 +54,7 @@ public class DiabetesLogDAO implements DAO<DiabetesLogDataRecord> {
     public Future<List<DiabetesLogDataRecord>> getAll() throws DAOException {
         final SettableFuture<List<DiabetesLogDataRecord>> settableFuture =
                 SettableFuture.create();
+        /*
         Firebase dataRecordListRef = new Firebase(Constants.FIREBASE_URL_DIABETESLOG)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
@@ -80,11 +76,13 @@ public class DiabetesLogDAO implements DAO<DiabetesLogDataRecord> {
                 settableFuture.set(null);
             }
         });
+        */
         return settableFuture;    }
 
     @Override
     public Future<List<DiabetesLogDataRecord>> getLast(int N) throws DAOException {
         final SettableFuture<List<DiabetesLogDataRecord>> settableFuture = SettableFuture.create();
+        /*
         final Date today = new Date();
 
         final List<DiabetesLogDataRecord> lastNRecords = Collections.synchronizedList(
@@ -95,7 +93,7 @@ public class DiabetesLogDAO implements DAO<DiabetesLogDataRecord> {
                 today,
                 lastNRecords,
                 settableFuture);
-
+*/
         return settableFuture;
     }
 
@@ -109,6 +107,7 @@ public class DiabetesLogDAO implements DAO<DiabetesLogDataRecord> {
                                       final Date someDate,
                                       final List<DiabetesLogDataRecord> synchronizedListOfRecords,
                                       final SettableFuture settableFuture) {
+        /*
         Firebase firebaseRef = new Firebase(Constants.FIREBASE_URL_DIABETESLOG)
 //                .child(userEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(someDate).toString());
@@ -138,7 +137,7 @@ public class DiabetesLogDAO implements DAO<DiabetesLogDataRecord> {
                     synchronizedListOfRecords.add(snapshot.getValue(DiabetesLogDataRecord.class));
                     newN--;
                 }
-                Date newDate = new Date(someDate.getTime() - 26 * 60 * 60 * 1000); /* -1 Day */
+                Date newDate = new Date(someDate.getTime() - 26 * 60 * 60 * 1000); // -1 Day
                 getLastNValues(newN,
                         userEmail,
                         newDate,
@@ -156,5 +155,6 @@ public class DiabetesLogDAO implements DAO<DiabetesLogDataRecord> {
                 settableFuture.set(synchronizedListOfRecords);
             }
         });
+        */
     }
 }

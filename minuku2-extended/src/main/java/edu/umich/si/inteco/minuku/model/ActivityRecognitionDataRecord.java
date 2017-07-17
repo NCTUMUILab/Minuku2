@@ -60,6 +60,9 @@ public class ActivityRecognitionDataRecord implements DataRecord {
         _id = id;
     }
 
+    public long getID(){
+        return _id;
+    }
 
     public long getDetectedtime(){return Detectedtime;}
 

@@ -7,7 +7,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
 
     <TextView
         android:paddingTop="20dp"
@@ -18,4 +19,29 @@
         android:textSize="25sp"
         android:layout_below="@+id/button2"
         android:layout_gravity="center_horizontal"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="154dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:text="Setting"
+            android:layout_width="170dp"
+            android:layout_height="63dp"
+            android:id="@+id/Setting"
+            android:textSize="18sp" />
+
+        <Button
+            android:text="Annotate"
+            android:id="@+id/Annotate"
+            android:layout_height="63dp"
+            android:layout_width="170dp"
+            android:textSize="18sp" />
+    </LinearLayout>
+
 </LinearLayout>

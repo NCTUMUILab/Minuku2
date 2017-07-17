@@ -30,12 +30,9 @@ import com.firebase.client.ValueEventListener;
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
@@ -55,7 +52,7 @@ public class AnnotatedImageDataRecordDAO<T extends AnnotatedImageDataRecord> imp
 
     protected static String TAG = "AnnotatedImageDataRecordDAO";
     protected String myUserEmail;
-    protected String mFirebaseUrl;
+    //protected String mFirebaseUrl;
     protected UUID uuID;
     protected Class<T> mDataRecordType;
     protected String imageType;
@@ -63,14 +60,14 @@ public class AnnotatedImageDataRecordDAO<T extends AnnotatedImageDataRecord> imp
     public AnnotatedImageDataRecordDAO(Class aDataRecordType) {
         myUserEmail = UserPreferences.getInstance().getPreference(Constants.KEY_ENCODED_EMAIL);
         this.mDataRecordType = aDataRecordType;
-        this.mFirebaseUrl = Constants.FIREBASE_URL_IMAGES;
+        //this.mFirebaseUrl = Constants.FIREBASE_URL_IMAGES;
         this.imageType = "DEFAULT";
     }
 
     public AnnotatedImageDataRecordDAO(Class aDataRecordType, String imageTypeforURL) {
         myUserEmail = UserPreferences.getInstance().getPreference(Constants.KEY_ENCODED_EMAIL);
         this.mDataRecordType = aDataRecordType;
-        this.mFirebaseUrl = Constants.FIREBASE_URL_IMAGES;
+       //this.mFirebaseUrl = Constants.FIREBASE_URL_IMAGES;
         this.imageType = imageTypeforURL;
     }
 
@@ -82,12 +79,13 @@ public class AnnotatedImageDataRecordDAO<T extends AnnotatedImageDataRecord> imp
     @Override
     public void add(AnnotatedImageDataRecord entity) throws DAOException {
         Log.d(TAG, "Adding image data record");
-
+/*
             Firebase imageListRef = new Firebase(this.mFirebaseUrl)
                     .child(myUserEmail)
                     .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString())
                     .child(imageType);
         imageListRef.push().setValue(entity);
+*/
     }
 
     @Override
@@ -99,6 +97,7 @@ public class AnnotatedImageDataRecordDAO<T extends AnnotatedImageDataRecord> imp
     public Future<List<T>> getAll() throws DAOException {
         final SettableFuture<List<T>> settableFuture =
                 SettableFuture.create();
+    /*
         Firebase imageListRef = new Firebase(this.mFirebaseUrl)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString())
@@ -118,12 +117,14 @@ public class AnnotatedImageDataRecordDAO<T extends AnnotatedImageDataRecord> imp
                 settableFuture.set(null);
             }
         });
+        */
         return settableFuture;
     }
 
     @Override
     public Future<List<T>> getLast(int N) throws DAOException {
         final SettableFuture<List<T>> settableFuture = SettableFuture.create();
+      /*
         final Date today = new Date();
 
         final List<T> lastNRecords = Collections.synchronizedList(
@@ -135,7 +136,7 @@ public class AnnotatedImageDataRecordDAO<T extends AnnotatedImageDataRecord> imp
                 lastNRecords,
                 settableFuture,
                 this.mFirebaseUrl);
-
+        */
         return settableFuture;
     }
 

@@ -34,12 +34,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import edu.umich.si.inteco.minuku.dao.ActivityRecognitionDataRecordDAO;
-import edu.umich.si.inteco.minuku.dao.FreeResponseQuestionDAO;
 import edu.umich.si.inteco.minuku.dao.LocationDataRecordDAO;
-import edu.umich.si.inteco.minuku.dao.MoodDataRecordDAO;
-import edu.umich.si.inteco.minuku.dao.MultipleChoiceQuestionDAO;
-import edu.umich.si.inteco.minuku.dao.NotificationDAO;
-import edu.umich.si.inteco.minuku.dao.SemanticLocationDataRecordDAO;
 import edu.umich.si.inteco.minuku.dao.TransportationModeDAO;
 import edu.umich.si.inteco.minuku.dao.UserSubmissionStatsDAO;
 import edu.umich.si.inteco.minuku.event.DecrementLoadingProcessCountEvent;
@@ -49,26 +44,15 @@ import edu.umich.si.inteco.minuku.manager.MinukuDAOManager;
 import edu.umich.si.inteco.minuku.manager.MinukuSituationManager;
 import edu.umich.si.inteco.minuku.model.ActivityRecognitionDataRecord;
 import edu.umich.si.inteco.minuku.model.LocationDataRecord;
-import edu.umich.si.inteco.minuku.model.MoodDataRecord;
-import edu.umich.si.inteco.minuku.model.SemanticLocationDataRecord;
 import edu.umich.si.inteco.minuku.model.TransportationModeDataRecord;
 import edu.umich.si.inteco.minuku.model.UserSubmissionStats;
 import edu.umich.si.inteco.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.LocationStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.TransportationModeStreamGenerator;
 import edu.umich.si.inteco.minuku_2.dao.CheckFamiliarOrNotDAO;
-import edu.umich.si.inteco.minuku_2.dao.DiabetesLogDAO;
-import edu.umich.si.inteco.minuku_2.dao.PromptMissedReportsQnADAO;
-import edu.umich.si.inteco.minuku_2.dao.TimelinePatchDataRecordDAO;
 import edu.umich.si.inteco.minuku_2.model.CheckFamiliarOrNotDataRecord;
-import edu.umich.si.inteco.minuku_2.model.DiabetesLogDataRecord;
-import edu.umich.si.inteco.minuku_2.model.PromptMissedReportsQnADataRecord;
-import edu.umich.si.inteco.minuku_2.model.TimelinePatchDataRecord;
 import edu.umich.si.inteco.minuku_2.question.QuestionConfig;
 import edu.umich.si.inteco.minuku_2.streamgenerator.CheckFamiliarOrNotStreamGenerator;
-import edu.umich.si.inteco.minukucore.event.ShowNotificationEvent;
-import edu.umich.si.inteco.minukucore.model.question.FreeResponse;
-import edu.umich.si.inteco.minukucore.model.question.MultipleChoice;
 
 /**
  * Created by neerajkumar on 8/28/16.
@@ -112,7 +96,7 @@ public class InstanceManager {
         //For location
         LocationDataRecordDAO locationDataRecordDAO = new LocationDataRecordDAO();
         daoManager.registerDaoFor(LocationDataRecord.class, locationDataRecordDAO);
-
+/*
         // SemanticLocation
         SemanticLocationDataRecordDAO semanticLocationDataRecordDAO = new SemanticLocationDataRecordDAO();
         daoManager.registerDaoFor(SemanticLocationDataRecord.class, semanticLocationDataRecordDAO);
@@ -148,7 +132,7 @@ public class InstanceManager {
         //PromptsMissedReportQnA data record DAO
         PromptMissedReportsQnADAO promptMissedReportsQnADAO = new PromptMissedReportsQnADAO();
         daoManager.registerDaoFor(PromptMissedReportsQnADataRecord.class, promptMissedReportsQnADAO);
-
+*/
         //TODO build new DAO here.
         ActivityRecognitionDataRecordDAO activityRecognitionDataRecordDAO = new ActivityRecognitionDataRecordDAO();
         daoManager.registerDaoFor(ActivityRecognitionDataRecord.class, activityRecognitionDataRecordDAO);
@@ -181,9 +165,6 @@ public class InstanceManager {
 
         TransportationModeStreamGenerator transportationModeStreamGenerator =
                 new TransportationModeStreamGenerator(getApplicationContext());
-
-        //ArmuroStreamGenerator armuroStreamGenerator =
-         //       new ArmuroStreamGenerator();
 
         CheckFamiliarOrNotStreamGenerator checkFamiliarOrNotStreamGenerator =
                 new CheckFamiliarOrNotStreamGenerator(getApplicationContext());

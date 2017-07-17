@@ -41,6 +41,7 @@
     <color name ="reject_button">#f19898</color>
     <color name ="accept_button">#8edaad</color>
     <color name="accent_lightest">#dcdbdb</color>
+    <color name="common_plus_signin_btn_text_dark_pressed">#000000</color>
 
 
 

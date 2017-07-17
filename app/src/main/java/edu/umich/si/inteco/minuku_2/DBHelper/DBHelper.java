@@ -13,10 +13,15 @@ import edu.umich.si.inteco.minuku_2.manager.DBManager;
 
 public class DBHelper extends SQLiteOpenHelper {
 
+    public static final String id = "_id";
     public static final String TAG = "DBHelper";
     public static final String home_col = "home";
     public static final String neighbor_col = "neighbor";
     public static final String outside_col = "outside";
+    public static final String homeorfaraway = "homeorfaraway";
+    public static final String staticornot = "staticornot";
+    public static String DEVICE = "device_id";
+    public static String TIME = "timeToSQLite";
 
     public static String checkFamiliarOrNot_table = "CheckFamiliarOrNot";
 
@@ -53,7 +58,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String cmd = "CREATE TABLE " +
                 checkFamiliarOrNot_table + "(" +
-                "_id INTEGER PRIMARY KEY  NOT NULL, " +
+                id+" INTEGER PRIMARY KEY NOT NULL, " +
+                DEVICE+" TEXT,"+
+                TIME + " TEXT NOT NULL," +
+                staticornot+" INTEGER,"+
                 home_col +" INTEGER, " +
                 neighbor_col + " INTEGER, " +
                 outside_col +" INTEGER" +

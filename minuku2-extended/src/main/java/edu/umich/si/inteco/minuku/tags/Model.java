@@ -1,25 +1,16 @@
 package edu.umich.si.inteco.minuku.tags;
 
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.GenericTypeIndicator;
-import com.firebase.client.ValueEventListener;
 import com.google.common.collect.EvictingQueue;
-
-import edu.umich.si.inteco.minuku.config.Constants;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import edu.umich.si.inteco.minuku.config.UserPreferences;
 import edu.umich.si.inteco.minuku.logger.Log;
 
 /**
@@ -43,6 +34,7 @@ public class Model {
     String TAG = "Model";
 
     private Model() {
+        /* TODO its never used before.
         mFirebaseRef = new Firebase(Constants.FIREBASE_URL_TAG)
                             .child(UserPreferences
                                     .getInstance()
@@ -89,6 +81,7 @@ public class Model {
 
             }
         });
+        */
     }
 
     public static Model getInstance() {

@@ -1,9 +1,5 @@
 package edu.umich.si.inteco.minuku_2.dao;
 
-import com.firebase.client.Firebase;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
@@ -38,10 +34,12 @@ public class TimelinePatchDataRecordDAO implements DAO<TimelinePatchDataRecord> 
     @Override
     public void add(TimelinePatchDataRecord entity) throws DAOException {
         Log.d(TAG, "Adding timeline patch data record.");
+        /*
         Firebase dataRecordListRef = new Firebase(Constants.FIREBASE_URL_TIMELINE_PATCH)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
         dataRecordListRef.push().setValue(entity);
+        */
     }
 
     @Override

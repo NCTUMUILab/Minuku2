@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.umich.si.inteco.minuku.logger.Log;
+import edu.umich.si.inteco.minuku.model.ActivityRecognitionDataRecord;
 import edu.umich.si.inteco.minuku.model.MinukuStreamSnapshot;
 import edu.umich.si.inteco.minukucore.event.IsDataExpectedEvent;
 import edu.umich.si.inteco.minukucore.event.NoDataChangeEvent;
@@ -62,6 +63,8 @@ public class MinukuStreamManager implements StreamManager {
     protected Map<Stream.StreamType, List<Stream<? extends DataRecord>>> mStreamTypeStreamMap;
     protected Map<Class, StreamGenerator> mRegisteredStreamGenerators;
 
+    private ActivityRecognitionDataRecord activityRecognitionDataRecord;
+
     private static int counter = 0;
 
     private static MinukuStreamManager instance;
@@ -70,6 +73,8 @@ public class MinukuStreamManager implements StreamManager {
         mStreamMap = new HashMap<>();
         mStreamTypeStreamMap = new HashMap<>();
         mRegisteredStreamGenerators = new HashMap<>();
+
+
     }
 
     public static MinukuStreamManager getInstance() {
@@ -196,5 +201,13 @@ public class MinukuStreamManager implements StreamManager {
 
     private static <T extends DataRecord>  List<T> createListOfType(Class<T> type) {
         return new ArrayList<T>();
+    }
+
+    public void setActivityRecognitionDataRecord(ActivityRecognitionDataRecord activityRecognitionDataRecord){
+        this.activityRecognitionDataRecord = activityRecognitionDataRecord;
+    }
+
+    public ActivityRecognitionDataRecord getActivityRecognitionDataRecord(){
+        return activityRecognitionDataRecord;
     }
 }

@@ -30,12 +30,9 @@ import com.firebase.client.ValueEventListener;
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
@@ -59,7 +56,7 @@ public class AbstractQuestionDAO<T extends Question> implements DAO<T> {
 
 
     public AbstractQuestionDAO(Class questionType, String aFirebaseUrl) {
-        mFirebaseUrl = aFirebaseUrl;
+        //mFirebaseUrl = aFirebaseUrl;
         mDataRecordType = questionType;
         mUserEmail = UserPreferences.getInstance().getPreference(Constants.KEY_ENCODED_EMAIL);
     }
@@ -72,10 +69,12 @@ public class AbstractQuestionDAO<T extends Question> implements DAO<T> {
     @Override
     public void add(T entity) throws DAOException {
         Log.d(TAG, "Adding question data record");
+        /*
         Firebase imageListRef = new Firebase(this.mFirebaseUrl)
                 .child(mUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
         imageListRef.push().setValue((T) entity);
+        */
     }
 
     @Override
@@ -87,6 +86,7 @@ public class AbstractQuestionDAO<T extends Question> implements DAO<T> {
     public Future<List<T>> getAll() throws DAOException {
         final SettableFuture<List<T>> settableFuture =
                 SettableFuture.create();
+        /*
         Firebase imageListRef = new Firebase(mFirebaseUrl)
                 .child(mUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
@@ -105,12 +105,14 @@ public class AbstractQuestionDAO<T extends Question> implements DAO<T> {
                 settableFuture.set(null);
             }
         });
+        */
         return settableFuture;
     }
 
     @Override
     public Future<List<T>> getLast(int N) throws DAOException {
         final SettableFuture<List<T>> settableFuture = SettableFuture.create();
+        /*
         final Date today = new Date();
 
         final List<T> lastNRecords = Collections.synchronizedList(
@@ -122,7 +124,7 @@ public class AbstractQuestionDAO<T extends Question> implements DAO<T> {
                 lastNRecords,
                 settableFuture,
                 mFirebaseUrl);
-
+        */
         return settableFuture;
     }
 

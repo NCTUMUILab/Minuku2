@@ -23,19 +23,10 @@
 package edu.umich.si.inteco.minuku.dao;
 
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.common.util.concurrent.SettableFuture;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
@@ -69,10 +60,12 @@ public class NoteDataRecordDAO implements DAO<NoteDataRecord> {
     @Override
     public void add(NoteDataRecord entity) throws DAOException {
         Log.d(TAG, "Adding note data record.");
+        /*
         Firebase locationListRef = new Firebase(Constants.FIREBASE_URL_NOTES)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
         locationListRef.push().setValue(entity);
+        */
     }
 
     @Override
@@ -84,6 +77,7 @@ public class NoteDataRecordDAO implements DAO<NoteDataRecord> {
     public Future<List<NoteDataRecord>> getAll() throws DAOException {
         final SettableFuture<List<NoteDataRecord>> settableFuture =
                 SettableFuture.create();
+        /*
         Firebase noteListRef = new Firebase(Constants.FIREBASE_URL_NOTES)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
@@ -101,12 +95,14 @@ public class NoteDataRecordDAO implements DAO<NoteDataRecord> {
             public void onCancelled(FirebaseError firebaseError) {
                 settableFuture.set(null);
             }
-        });
-        return settableFuture;    }
+        });*/
+        return settableFuture;
+    }
 
     @Override
     public Future<List<NoteDataRecord>> getLast(int N) throws DAOException {
         final SettableFuture<List<NoteDataRecord>> settableFuture = SettableFuture.create();
+        /*
         final Date today = new Date();
 
         final List<NoteDataRecord> lastNRecords = Collections.synchronizedList(
@@ -117,8 +113,9 @@ public class NoteDataRecordDAO implements DAO<NoteDataRecord> {
                 today,
                 lastNRecords,
                 settableFuture);
-
-        return settableFuture;    }
+*/
+        return settableFuture;
+    }
 
     @Override
     public void update(NoteDataRecord oldEntity, NoteDataRecord newEntity) throws DAOException {
@@ -130,12 +127,13 @@ public class NoteDataRecordDAO implements DAO<NoteDataRecord> {
                                       final Date someDate,
                                       final List<NoteDataRecord> synchronizedListOfRecords,
                                       final SettableFuture settableFuture) {
+        /*
         Firebase firebaseRef = new Firebase(Constants.FIREBASE_URL_NOTES)
                 .child(userEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(someDate).toString());
 
         if(N <= 0) {
-            /* TODO(neerajkumar): Get this f***up fixed! */
+            // TODO(neerajkumar): Get this f***up fixed!
 
             // The first element in the list is actually the last in the database.
             // Reverse the list before setting the future with a result.
@@ -157,7 +155,7 @@ public class NoteDataRecordDAO implements DAO<NoteDataRecord> {
                 // What it means is that no entries were added for this date, i.e.
                 // all the historic information has been exhausted.
                 if(!dataSnapshot.exists()) {
-                    /* TODO(neerajkumar): Get this f***up fixed! */
+                    // TODO(neerajkumar): Get this f***up fixed!
 
                     // The first element in the list is actually the last in the database.
                     // Reverse the list before setting the future with a result.
@@ -171,7 +169,7 @@ public class NoteDataRecordDAO implements DAO<NoteDataRecord> {
                     synchronizedListOfRecords.add(snapshot.getValue(NoteDataRecord.class));
                     newN--;
                 }
-                Date newDate = new Date(someDate.getTime() - 26 * 60 * 60 * 1000); /* -1 Day */
+                Date newDate = new Date(someDate.getTime() - 26 * 60 * 60 * 1000); // -1 Day
                 getLastNValues(newN,
                         userEmail,
                         newDate,
@@ -184,7 +182,7 @@ public class NoteDataRecordDAO implements DAO<NoteDataRecord> {
             @Override
             public void onCancelled(FirebaseError firebaseError) {
 
-                /* TODO(neerajkumar): Get this f***up fixed! */
+                // TODO(neerajkumar): Get this f***up fixed!
 
                 // The first element in the list is actually the last in the database.
                 // Reverse the list before setting the future with a result.
@@ -196,5 +194,6 @@ public class NoteDataRecordDAO implements DAO<NoteDataRecord> {
                 settableFuture.set(synchronizedListOfRecords);
             }
         });
+        */
     }
 }

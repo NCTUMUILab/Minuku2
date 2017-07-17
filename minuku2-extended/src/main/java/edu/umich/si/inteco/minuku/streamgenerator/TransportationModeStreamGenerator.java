@@ -123,6 +123,8 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     public static final int TransportationMode_REFRESH_FREQUENCY = 10; //1s, 1000ms
     public static final int BACKGROUND_RECORDING_INITIAL_DELAY = 0;
 
+    public ActivityRecognitionStreamGenerator activityRecognitionStreamGenerator;
+
     public static TransportationModeDataRecord toCheckFamiliarOrNotTransportationModeDataRecord;
 
     //TransportationModeDataRecord transportationModeDataRecord;
@@ -133,7 +135,7 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
         this.mStream = new TransportationModeStream(Constants.LOCATION_QUEUE_SIZE);
         this.mDAO = MinukuDAOManager.getInstance().getDaoFor(TransportationModeDataRecord.class);
 
-        //this.activityRecognitionStreamGenerator = activityRecognitionStreamGenerator;
+        this.activityRecognitionStreamGenerator = ActivityRecognitionStreamGenerator.getInstance(applicationContext);
 
         //transportationModeDataRecord = new TransportationModeDataRecord();
 
@@ -211,12 +213,19 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
         public void run() {
 
             //Log.e(TAG, String.valueOf(activityRecognitionStreamGenerator.getLastSavedRecord()));
+            if(MinukuStreamManager.getInstance().getActivityRecognitionDataRecord()!=null){
+            //if (activityRecognitionStreamGenerator.getLastSavedRecord()!=null) { //maybe need to judge Location's record even "getLastSavedRecord()!=null" ?
 
-            if (getLastSavedRecord()!=null) { //maybe need to judge Location's record even "getLastSavedRecord()!=null" ?
-                ActivityRecognitionDataRecord recordPool = getLastSavedRecord();
+                ActivityRecognitionDataRecord recordPool = MinukuStreamManager.getInstance().getActivityRecognitionDataRecord();//activityRecognitionStreamGenerator.getLastSavedRecord();
+                Log.e(TAG,"getID : "+recordPool.getID());
+                Log.e(TAG,"CreateTime:" + recordPool.getCreationTime()+ " MostProbableActivity:"+recordPool.getMostProbableActivity());
+
                 if (recordPool!=null) {
                     examineTransportation(recordPool);
+                    Log.e(TAG, "[testactivitylog] examine" +
+                            " transportation: " + examineTransportation(recordPool));
                     Log.e(TAG, "[testactivitylog] transportation: " + getConfirmedActvitiyString());
+
                     //transportationModeDataRecord =
                     //       new TransportationModeDataRecord(getActivityNameFromType(examineTransportation(recordPool)));//;getConfirmedActvitiyString()
 
@@ -233,7 +242,7 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     }
 
     public int examineTransportation(ActivityRecognitionDataRecord activityRecognitionDataRecord) {
-        //TODO eat ActivityRecognition and Timestamp to get
+        //** eat ActivityRecognition and Timestamp to get
         //List<DetectedActivity> probableActivities = record.getProbableActivities();
         //long detectionTime = record.getTimestamp();
 

@@ -23,19 +23,10 @@
 package edu.umich.si.inteco.minuku.dao;
 
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.common.util.concurrent.SettableFuture;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
@@ -67,10 +58,12 @@ public class SemanticLocationDataRecordDAO implements DAO<SemanticLocationDataRe
     @Override
     public void add(SemanticLocationDataRecord entity) throws DAOException {
         Log.d(TAG, "Adding location data record.");
+        /*
         Firebase locationListRef = new Firebase(Constants.FIREBASE_URL_SEMANTIC_LOCATION)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
         locationListRef.push().setValue((SemanticLocationDataRecord) entity);
+        */
     }
 
     @Override
@@ -82,6 +75,7 @@ public class SemanticLocationDataRecordDAO implements DAO<SemanticLocationDataRe
     public Future<List<SemanticLocationDataRecord>> getAll() throws DAOException {
         final SettableFuture<List<SemanticLocationDataRecord>> settableFuture =
                 SettableFuture.create();
+        /*
         Firebase locationListRef = new Firebase(Constants.FIREBASE_URL_SEMANTIC_LOCATION)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
@@ -100,12 +94,14 @@ public class SemanticLocationDataRecordDAO implements DAO<SemanticLocationDataRe
                 settableFuture.set(null);
             }
         });
+        */
         return settableFuture;
     }
 
     @Override
     public Future<List<SemanticLocationDataRecord>> getLast(int N) throws DAOException {
         final SettableFuture<List<SemanticLocationDataRecord>> settableFuture = SettableFuture.create();
+        /*
         final Date today = new Date();
 
         final List<SemanticLocationDataRecord> lastNRecords = Collections.synchronizedList(
@@ -116,7 +112,7 @@ public class SemanticLocationDataRecordDAO implements DAO<SemanticLocationDataRe
                 today,
                 lastNRecords,
                 settableFuture);
-
+*/
         return settableFuture;
     }
 
@@ -131,6 +127,7 @@ public class SemanticLocationDataRecordDAO implements DAO<SemanticLocationDataRe
                                       final Date someDate,
                                       final List<SemanticLocationDataRecord> synchronizedListOfRecords,
                                       final SettableFuture settableFuture) {
+        /*
         Firebase firebaseRef = new Firebase(Constants.FIREBASE_URL_QUESTIONS)
                 .child(userEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(someDate).toString());
@@ -138,7 +135,7 @@ public class SemanticLocationDataRecordDAO implements DAO<SemanticLocationDataRe
         Log.d(TAG, "Checking the value of N "+ N);
 
         if(N <= 0) {
-            /* TODO(neerajkumar): Get this f***up fixed! */
+            // TODO(neerajkumar): Get this f***up fixed!
 
             // The first element in the list is actually the last in the database.
             // Reverse the list before setting the future with a result.
@@ -159,7 +156,7 @@ public class SemanticLocationDataRecordDAO implements DAO<SemanticLocationDataRe
                 // What it means is that no entries were added for this date, i.e.
                 // all the historic information has been exhausted.
                 if(!dataSnapshot.exists()) {
-                    /* TODO(neerajkumar): Get this f***up fixed! */
+                    // TODO(neerajkumar): Get this f***up fixed!
 
                     // The first element in the list is actually the last in the database.
                     // Reverse the list before setting the future with a result.
@@ -173,7 +170,7 @@ public class SemanticLocationDataRecordDAO implements DAO<SemanticLocationDataRe
                     synchronizedListOfRecords.add(snapshot.getValue(SemanticLocationDataRecord.class));
                     newN--;
                 }
-                Date newDate = new Date(someDate.getTime() - 26 * 60 * 60 * 1000); /* -1 Day */
+                Date newDate = new Date(someDate.getTime() - 26 * 60 * 60 * 1000); // -1 Day
                 getLastNValues(newN,
                         userEmail,
                         newDate,
@@ -184,7 +181,7 @@ public class SemanticLocationDataRecordDAO implements DAO<SemanticLocationDataRe
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                /* TODO(neerajkumar): Get this f***up fixed! */
+                // TODO(neerajkumar): Get this f***up fixed!
 
                 // The first element in the list is actually the last in the database.
                 // Reverse the list before setting the future with a result.
@@ -197,6 +194,7 @@ public class SemanticLocationDataRecordDAO implements DAO<SemanticLocationDataRe
                 settableFuture.set(synchronizedListOfRecords);
             }
         });
+        */
     }
 
 }

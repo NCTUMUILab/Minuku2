@@ -230,9 +230,13 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         //mLocationRequest.setSmallestDisplacement(Constants.LOCATION_MINUMUM_DISPLACEMENT_UPDATE_THRESHOLD);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        LocationServices.FusedLocationApi
-                .requestLocationUpdates(mGoogleApiClient, mLocationRequest,
-                         this);
+        try {
+            LocationServices.FusedLocationApi
+                    .requestLocationUpdates(mGoogleApiClient, mLocationRequest,
+                            this);
+        }catch (SecurityException e){
+
+        }
     }
 
     @Override

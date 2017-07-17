@@ -23,19 +23,10 @@
 package edu.umich.si.inteco.minuku.dao;
 
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.common.util.concurrent.SettableFuture;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
@@ -67,10 +58,12 @@ public class MoodDataRecordDAO implements DAO<MoodDataRecord> {
     @Override
     public void add(MoodDataRecord entity) throws DAOException {
         Log.d(TAG, "Adding mood data record");
+/*
         Firebase imageListRef = new Firebase(Constants.FIREBASE_URL_MOODS)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
         imageListRef.push().setValue((MoodDataRecord) entity);
+*/
     }
 
     @Override
@@ -80,8 +73,10 @@ public class MoodDataRecordDAO implements DAO<MoodDataRecord> {
 
     @Override
     public Future<List<MoodDataRecord>> getAll() throws DAOException {
+
         final SettableFuture<List<MoodDataRecord>> settableFuture =
                 SettableFuture.create();
+/*
         Firebase moodListRef = new Firebase(Constants.FIREBASE_URL_MOODS)
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
@@ -103,12 +98,15 @@ public class MoodDataRecordDAO implements DAO<MoodDataRecord> {
                 settableFuture.set(null);
             }
         });
+ */
         return settableFuture;
+
     }
 
     @Override
     public Future<List<MoodDataRecord>> getLast(final int N) throws DAOException {
         final SettableFuture<List<MoodDataRecord>> settableFuture = SettableFuture.create();
+/*
         final Date today = new Date();
 
         final List<MoodDataRecord> lastNRecords = new ArrayList<MoodDataRecord>();
@@ -118,7 +116,7 @@ public class MoodDataRecordDAO implements DAO<MoodDataRecord> {
                 today,
                 lastNRecords,
                 settableFuture);
-
+*/
         return settableFuture;
     }
 
@@ -132,6 +130,7 @@ public class MoodDataRecordDAO implements DAO<MoodDataRecord> {
                                              final Date someDate,
                                              final List<MoodDataRecord> synchronizedListOfRecords,
                                              final SettableFuture settableFuture) {
+/*
         Firebase firebaseRef = new Firebase(Constants.FIREBASE_URL_MOODS)
                 .child(userEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(someDate).toString());
@@ -170,7 +169,7 @@ public class MoodDataRecordDAO implements DAO<MoodDataRecord> {
                     synchronizedListOfRecords.add(snapshot.getValue(MoodDataRecord.class));
                     newN--;
                 }
-                Date newDate = new Date(someDate.getTime() - 26 * 60 * 60 * 1000); /* -1 Day */
+                Date newDate = new Date(someDate.getTime() - 26 * 60 * 60 * 1000); /*** -1 Day
                 getLastNValues(newN,
                         userEmail,
                         newDate,
@@ -180,7 +179,7 @@ public class MoodDataRecordDAO implements DAO<MoodDataRecord> {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                /* TODO(neerajkumar): Get this f***up fixed! */
+                // TODO(neerajkumar): Get this f***up fixed!
 
                 // The first element in the list is actually the last in the database.
                 // Reverse the list before setting the future with a result.
@@ -192,5 +191,6 @@ public class MoodDataRecordDAO implements DAO<MoodDataRecord> {
                 settableFuture.set(synchronizedListOfRecords);
             }
         });
+        */
     }
 }

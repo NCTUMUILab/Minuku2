@@ -17,11 +17,20 @@ public class CheckFamiliarOrNotDataRecord implements DataRecord {
     private int home;
     private int neighbor;
     private int outside;
+    private int staticornot;
 
     public CheckFamiliarOrNotDataRecord(){}
 
     public CheckFamiliarOrNotDataRecord(int home,int neighbor,int outside){
         this.creationTime = new Date().getTime();
+        this.home = home;
+        this.neighbor = neighbor;
+        this.outside = outside;
+    }
+
+    public CheckFamiliarOrNotDataRecord(int staticornot,int home,int neighbor,int outside){
+        this.creationTime = new Date().getTime();
+        this.staticornot = staticornot;
         this.home = home;
         this.neighbor = neighbor;
         this.outside = outside;

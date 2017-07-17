@@ -57,11 +57,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import edu.umich.si.inteco.minuku.event.DecrementLoadingProcessCountEvent;
 import edu.umich.si.inteco.minuku.event.IncrementLoadingProcessCountEvent;
 import edu.umich.si.inteco.minuku.logger.Log;
+import edu.umich.si.inteco.minuku_2.controller.Ohio.recordinglistohio;
+import edu.umich.si.inteco.minuku_2.controller.Ohio.settingohio;
 import edu.umich.si.inteco.minuku_2.controller.home;
 import edu.umich.si.inteco.minuku_2.controller.report;
 import edu.umich.si.inteco.minuku_2.manager.InstanceManager;
 import edu.umich.si.inteco.minuku_2.service.BackgroundService;
-import edu.umich.si.inteco.minuku_2.service.CheckFamiliarOrNotService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     public static android.support.design.widget.TabLayout mTabs;
     public static ViewPager mViewPager;
     private TextView device_id;
-    private Button please_start_service;
+    private Button ohio_setting, ohio_annotate;
     private String projName = "Ohio";
     //private UserSubmissionStats mUserSubmissionStats;
 
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.e(TAG,"start");
 
+/*
         setContentView(R.layout.activity_main);
 
         final LayoutInflater mInflater = getLayoutInflater().from(this);
@@ -112,8 +114,9 @@ public class MainActivity extends AppCompatActivity {
         initViewPager(timerview,recordview);
 
         SettingViewPager();
+*/
 
-        //whichView(projName);
+        whichView(projName);
 
         startService(new Intent(getBaseContext(), BackgroundService.class));
         //startService(new Intent(getBaseContext(), MinukuNotificationManager.class));
@@ -152,13 +155,40 @@ public class MainActivity extends AppCompatActivity {
 
             setContentView(R.layout.onlydeviceid);
 
-            device_id=(TextView)findViewById(R.id.deviceid);
+            getDeviceid();
+
+            ohio_setting = (Button)findViewById(R.id.Setting);
+            ohio_setting.setOnClickListener(ohio_settinging);
+
+            ohio_annotate = (Button)findViewById(R.id.Annotate);
+            ohio_annotate.setOnClickListener(ohio_annotateing);
+            //device_id=(TextView)findViewById(R.id.deviceid);
+
             //device_id.setText("ID = "+Constant.DEVICE_ID);
 
         }
 
     }
 
+    //to view settingohio
+    private Button.OnClickListener ohio_annotateing = new Button.OnClickListener() {
+        public void onClick(View v) {
+            Log.e(TAG,"recordinglist_ohio clicked");
+
+            startActivity(new Intent(MainActivity.this, recordinglistohio.class));
+
+        }
+    };
+
+    //to view settingohio
+    private Button.OnClickListener ohio_settinging = new Button.OnClickListener() {
+        public void onClick(View v) {
+            Log.e(TAG,"settingohio clicked");
+
+            startActivity(new Intent(MainActivity.this, settingohio.class));
+
+        }
+    };
 
     //public for update
     public void initViewPager(View timerview, View recordview){
@@ -190,6 +220,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+
+        if(projName.equals("Ohio")) //f***ing hardcode
+            menu.findItem(R.id.action_report).setVisible(false);
+
         if(Constant.tabpos)
             menu.findItem(R.id.action_selectdate).setVisible(true);
         else
@@ -222,6 +256,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkAndRequestPermissions() {
+
+        Log.e(TAG,"checkingAndRequestingPermissions");
 
         int permissionReadExternalStorage = ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -259,11 +295,53 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*@Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_ID_MULTIPLE_PERMISSIONS: {
+
+                Map<String, Integer> perms = new HashMap<>();
+
+                // Initialize the map with both permissions
+                perms.put(android.Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                //perms.put(Manifest.permission.SYSTEM_ALERT_WINDOW, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.ACCESS_COARSE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.BODY_SENSORS, PackageManager.PERMISSION_GRANTED);
+
+                // Fill with actual results from user
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < permissions.length; i++)
+                        perms.put(permissions[i], grantResults[i]);
+                    // Check for both permissions
+                    if (perms.get(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.BODY_SENSORS) == PackageManager.PERMISSION_GRANTED){
+                        android.util.Log.d("permission", "[permission test]all permission granted");
+                        //permission_ok=1;
+                        startServiceWork();
+                    } else {
+                        Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        }
+    }*/
+
     public void getDeviceid(){
+
         TelephonyManager mngr = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
         int permissionStatus= ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE);
         if(permissionStatus==PackageManager.PERMISSION_GRANTED){
             Constant.DEVICE_ID = mngr.getDeviceId();
+
+            Log.e(TAG,"DEVICE_ID"+Constant.DEVICE_ID+" : "+mngr.getDeviceId());
 
             if(projName.equals("Ohio"))
                 device_id.setText("ID = "+Constant.DEVICE_ID);
@@ -283,6 +361,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Use service to catch user's log, GPS, activity;
         //TODO Bootcomplete 復原
+        //** remember to check this is for what?
+/*
         if (!CheckFamiliarOrNotService.isServiceRunning()){
             android.util.Log.d("MainActivity", "[test service running]  going start the probe service isServiceRunning:" + CheckFamiliarOrNotService.isServiceRunning());
             Intent intent = new Intent();
@@ -290,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
 
             startService(intent);
         }
-
+*/
     }
 
     private String setDateFormat(int year,int monthOfYear,int dayOfMonth){
