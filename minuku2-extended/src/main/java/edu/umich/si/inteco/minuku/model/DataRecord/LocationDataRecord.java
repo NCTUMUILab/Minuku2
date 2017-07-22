@@ -20,7 +20,9 @@
  * No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
  */
 
-package edu.umich.si.inteco.minuku.model;
+package edu.umich.si.inteco.minuku.model.DataRecord;
+
+import org.json.JSONObject;
 
 import java.util.Date;
 
@@ -30,11 +32,33 @@ import edu.umich.si.inteco.minukucore.model.DataRecord;
  */
 public class LocationDataRecord implements DataRecord {
 
-    public float latitude;
-    public float longitude;
-    public long creationTime;
+    private long creationTime;
+
+    private float latitude;
+    private float longitude;
+    private float Accuracy;
+    private float Altitude;
+    private float Speed;
+    private float Bearing;
+    private String Provider;
+
+
+    protected JSONObject jSONObject;
+
 
     public LocationDataRecord() {
+
+    }
+
+    public LocationDataRecord(float latitude, float longitude, float Accuracy, float Altitude, float Speed, float Bearing, String Provider) {
+        this.creationTime = new Date().getTime();
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.Accuracy = Accuracy;
+        this.Altitude = Altitude;
+        this.Speed = Speed;
+        this.Bearing = Bearing;
+        this.Provider = Provider;
 
     }
 
@@ -44,12 +68,25 @@ public class LocationDataRecord implements DataRecord {
         this.longitude = longitude;
     }
 
+    public LocationDataRecord(JSONObject jSONObject) {
+        this.creationTime = new Date().getTime();
+        this.jSONObject = jSONObject;
+    }
+
     public float getLatitude() {
         return latitude;
     }
 
     public float getLongitude() {
         return longitude;
+    }
+
+    public float getAccuracy(){
+        return Accuracy;
+    }
+
+    public void setAccuracy(float accuracy) {
+        this.Accuracy = accuracy;
     }
 
     @Override
@@ -67,6 +104,38 @@ public class LocationDataRecord implements DataRecord {
 
     public void setCreationTime(long creationTime) {
         this.creationTime = creationTime;
+    }
+
+    public float getAltitude() {
+        return Altitude;
+    }
+
+    public void setAltitude(float Altitude) {
+        this.Altitude = Altitude;
+    }
+
+    public float getSpeed() {
+        return Speed;
+    }
+
+    public void setSpeed(float Speed) {
+        this.Speed = Speed;
+    }
+
+    public float getBearing() {
+        return Bearing;
+    }
+
+    public void setBearing(float Bearing) {
+        this.Bearing = Bearing;
+    }
+
+    public String getProvider() {
+        return Provider;
+    }
+
+    public void setProvider(String Provider) {
+        this.Provider = Provider;
     }
 
     @Override

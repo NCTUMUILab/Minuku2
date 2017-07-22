@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import edu.umich.si.inteco.minuku.manager.MinukuStreamManager;
-import edu.umich.si.inteco.minuku.model.ActivityRecognitionDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.ActivityRecognitionDataRecord;
 import edu.umich.si.inteco.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
 import edu.umich.si.inteco.minukucore.exception.StreamNotFoundException;
 
@@ -43,7 +43,6 @@ public class ActivityRecognitionService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         /**  move to TriggerManager  **/
-        //ModeWork mModeWork = new ModeWork();
 //TODO triggerManager situationManager, triggerManager: replace ModeWork.work. , situationManager: replace ModeWork.condition. 放transportationManager(In Minuku).
         if(ActivityRecognitionResult.hasResult(intent)) {
             try {

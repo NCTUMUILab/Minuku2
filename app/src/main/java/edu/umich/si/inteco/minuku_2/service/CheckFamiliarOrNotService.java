@@ -7,9 +7,13 @@ import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.ContextCompat;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -33,14 +37,11 @@ import java.util.concurrent.TimeUnit;
 
 import edu.umich.si.inteco.minuku.config.Constants;
 import edu.umich.si.inteco.minuku.manager.MinukuStreamManager;
-import edu.umich.si.inteco.minuku.streamgenerator.LocationStreamGenerator;
-import edu.umich.si.inteco.minuku.streamgenerator.TransportationModeStreamGenerator;
+import edu.umich.si.inteco.minuku_2.Constant;
 import edu.umich.si.inteco.minuku_2.R;
 import edu.umich.si.inteco.minuku_2.model.CheckFamiliarOrNotDataRecord;
 import edu.umich.si.inteco.minuku_2.streamgenerator.CheckFamiliarOrNotStreamGenerator;
 import edu.umich.si.inteco.minukucore.exception.StreamNotFoundException;
-
-import static edu.umich.si.inteco.minuku_2.MainActivity.task;
 
 /**
  * Created by Lawrence on 2017/4/23.
@@ -64,7 +65,7 @@ public class CheckFamiliarOrNotService extends Service {
     private float latitude;
     private float longitude;
 
-    private int userid;
+    private String userid;
 
     private int home = 0;
     private int neighbor = 0;
@@ -106,9 +107,12 @@ public class CheckFamiliarOrNotService extends Service {
     private int notifyID=1;
     private int qua_notifyID = 2;
 
+    private long vibrate[] = {0,200,800,500};
+
     private String transportation;
 
     private boolean testingserver = false;
+    private boolean isServiceRunning = false;
 
     private final String link = "https://qtrial2017q2az1.az1.qualtrics.com/jfe/form/SV_0VA9kDhoEeWHuYd";
     private String NotificationText = "Please click to fill the questionnaire";
@@ -125,11 +129,6 @@ public class CheckFamiliarOrNotService extends Service {
     public void onCreate(){
         super.onCreate();
         Log.d("CheckFamiliarOrNotService", "onCreate");
-
-        //mode = Mode.setMode(2);
-        /*** determine what task is now ***/
-        task = getString(R.string.current_task);
-        //Log.e(TAG,"Mode: "+task);
 
         serviceInstance = this;
 
@@ -163,13 +162,22 @@ public class CheckFamiliarOrNotService extends Service {
         super.onStartCommand(intent, flags, startId);
         Log.d("CheckFamiliarOrNotService", "[test service running] going to start the probe service, isServiceRunning:  " + isServiceRunning());
 
-        startService();
+        int permissionStatus= ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE);
+        if(permissionStatus== PackageManager.PERMISSION_GRANTED) {
+            TelephonyManager mngr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+            Constant.DEVICE_ID = mngr.getDeviceId();
+            userid = Constant.DEVICE_ID;
+        }
+        if(!isServiceRunning)
+            startService();
 
         return START_STICKY;
     }
 
 
     public void startService(){
+
+        isServiceRunning = true;
 
         runMainThread();
 
@@ -227,6 +235,10 @@ public class CheckFamiliarOrNotService extends Service {
 
             Log.d(TAG,"CheckFamiliarOrNotRunnable");
 
+            //SharedPreferences
+            SharedPreferences sharedPrefs = getSharedPreferences("edu.umich.si.inteco.minuku_2", MODE_PRIVATE);
+            SharedPreferences.Editor editor = getSharedPreferences("edu.umich.si.inteco.minuku_2", MODE_PRIVATE).edit();
+
             Date curDate = new Date(System.currentTimeMillis()) ;
             String dateformat = "yyyyMMdd";
             SimpleDateFormat df = new SimpleDateFormat(dateformat);
@@ -239,70 +251,89 @@ public class CheckFamiliarOrNotService extends Service {
             outside=0;
             dist=0;
             testingserver = false;
+//            userid = "6";
 
-            if(!lastTimeSend_today.equals(today)){
-                lastTimeSend_today = today;
+            Log.d(TAG,"userid: " +userid);
 
-                daily_count_HomeMove = 0;
-                daily_count_HomeNotMove = 0;
-                daily_count_NearHomeMove = 0;
-                daily_count_NearHomeNotMove = 0;
-                daily_count_FarawayMove = 0;
-                daily_count_FarawayNotMove = 0;
-            }
+            if(!checkSleepingTime()) {
+
+                if (!lastTimeSend_today.equals(today)) {
+                    lastTimeSend_today = today;
+
+                    daily_count_HomeMove = 0;
+                    daily_count_HomeNotMove = 0;
+                    daily_count_NearHomeMove = 0;
+                    daily_count_NearHomeNotMove = 0;
+                    daily_count_FarawayMove = 0;
+                    daily_count_FarawayNotMove = 0;
+                }
 
 
-            //get latitude and longitude from LocationStreamGenerator
-            try {
+                //get latitude and longitude from LocationStreamGenerator
+                try {
+                /*
                 latitude = LocationStreamGenerator.toCheckFamiliarOrNotLocationDataRecord.getLatitude();
                 longitude = LocationStreamGenerator.toCheckFamiliarOrNotLocationDataRecord.getLongitude();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            Log.d(TAG+" testing server","latitude : "+latitude+" longitude : "+longitude);
+                */
+                    latitude = MinukuStreamManager.getInstance().getLocationDataRecord().getLatitude();
+                    longitude = MinukuStreamManager.getInstance().getLocationDataRecord().getLongitude();
 
-            userid = 6;
+                    editor.putFloat("latestLatitude",latitude);
+                    editor.putFloat("latestLongitude",longitude);
+                    editor.commit();
 
-            Log.d(TAG,"epoch time : "+String.valueOf((getCurrentTimeInMillis()/1000)));
+                } catch (Exception e) {
 
-            //check the server
-            String mcog = "http://mcog.asc.ohio-state.edu/apps/pip?" +
-                    "lon="+String.valueOf(longitude) +
-                    "&lat="+String.valueOf(latitude) +
-                    "&userid=" + String.valueOf(userid) + //TODO set userid to global variable.
-                    "&tsphone=" + String.valueOf((getCurrentTimeInMillis()/1000)) +
+                    latitude = sharedPrefs.getFloat("latestLatitude", (float)-999.0);
+                    longitude = sharedPrefs.getFloat("latestLongitude", (float)-999.0);
+
+                    e.printStackTrace();
+                }
+                Log.d(TAG + " testing server", "latitude : " + latitude + " longitude : " + longitude);
+
+//                userid = 6;
+
+                Log.d(TAG, "getCurrentTimeInMillis : " + String.valueOf(getCurrentTimeInMillis()));
+                Log.d(TAG, "getCurrentTimeInMillis/1000 : " + String.valueOf((getCurrentTimeInMillis() / 1000)));
+
+                //check the server
+                String mcog = "http://mcog.asc.ohio-state.edu/apps/pip?" +
+                        "lon=" + String.valueOf(longitude) +
+                        "&lat=" + String.valueOf(latitude) +
+                        "&userid=" + String.valueOf(userid) + //TODO set userid to global variable.
+                        "&tsphone=" + String.valueOf((getCurrentTimeInMillis() / 1000)) +
 //                    "&pdop=10.2" +
-                    "&format=json";
+                        "&format=json";
 
-            Log.d(TAG,mcog);
+                Log.d(TAG, mcog);
 
-            try{
-                JSONObject json = readJsonFromUrl(mcog);
-                Log.d(TAG,json.toString());
+                try {
+                    JSONObject json = readJsonFromUrl(mcog);
+                    Log.d(TAG, json.toString());
 
-                Log.d(TAG,"inhome : "+json.get("inhome")+" distance : "+json.get("distance"));
+                    Log.d(TAG, "inhome : " + json.get("inhome") + " distance : " + json.get("distance"));
 
-                home = Integer.valueOf(json.get("inhome").toString());
-                if(json.get("distance").toString().contains("E"))
-                    dist = 9999;
-                else
-                    dist = Float.valueOf(json.get("distance").toString());
-                //neighbor = Integer.valueOf((String) json.get("inhrsd"));
-                //outside = Integer.valueOf((String) json.get("outhr"));
+                    home = Integer.valueOf(json.get("inhome").toString());
+                    if (json.get("distance").toString().contains("E"))
+                        dist = 9999;
+                    else
+                        dist = Float.valueOf(json.get("distance").toString());
+                    //neighbor = Integer.valueOf((String) json.get("inhrsd"));
+                    //outside = Integer.valueOf((String) json.get("outhr"));
 
-                Log.d(TAG,"inhome : "+home+" distance : "+dist);
+                    Log.d(TAG, "inhome : " + home + " distance : " + dist);
 
-            }catch (JSONException e){
-                Log.d(TAG,"JSONException");
+                } catch (JSONException e) {
+                    Log.d(TAG, "JSONException");
 
-                e.printStackTrace();
-            }catch (IOException e){
-                Log.d(TAG,"IOException");
-                testingserver = true;
-                e.printStackTrace();
-            }
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Log.d(TAG, "IOException");
+                    testingserver = true;
+                    e.printStackTrace();
+                }
 
-            Log.d(TAG,"Json runnable");
+                Log.d(TAG, "Json runnable");
             /*
             * {"userid": 6, "inhome": 1, "outhr": 0, "tsphone": 9999, "ts": 1499762685,
                "polygonid": 5, "distance": 0, "tsentstate": 9999, "prevtsphone": 999999, "timeinstate": 0}
@@ -320,37 +351,37 @@ public class CheckFamiliarOrNotService extends Service {
             else if(num>=91&&num<=100)
                 outside=1;*/
 
-/*
-            try {
-                transportation = TransportationModeStreamGenerator.toCheckFamiliarOrNotTransportationModeDataRecord.getConfirmedActivityType();
-                if (transportation.equals("static"))
-                    staticornot = 1;
-                else
-                    staticornot = 0;
-            }catch (Exception e){
-                Log.e(TAG,"No TransportationMode, yet.");
-                e.printStackTrace();
-            }
-*/
+                try {
+
+                    if(MinukuStreamManager.getInstance().getTransportationModeDataRecord()!=null) {
+                        transportation = MinukuStreamManager.getInstance().getTransportationModeDataRecord().getConfirmedActivityType();
+
+                        Log.d(TAG,"transportation : "+ transportation);
+
+                    }
+                }catch (Exception e){
+                    Log.e(TAG,"No TransportationMode, yet.");
+                    e.printStackTrace();
+                }
 
             /*CheckFamiliarOrNotDataRecord checkFamiliarOrNotDataRecord =
                     new CheckFamiliarOrNotDataRecord(home,neighbor,outside);*/
 
-            if(testingserver){ //TODO check data on sqllite and server is working or not.
+                if (testingserver) { //TODO check data on sqllite and server is working or not.
 
 
+                } else {
 
-            }else{
+                    triggerQualtrics();
 
-                triggerQualtrics();
+                    //checkFamiliarOrNotStreamGenerator.setDAO(checkFamiliarOrNotDataRecord);
+                    //mDAO.insert(checkFamiliarOrNotDataRecord);
 
-                //checkFamiliarOrNotStreamGenerator.setDAO(checkFamiliarOrNotDataRecord);
-                //mDAO.insert(checkFamiliarOrNotDataRecord);
+                }
 
+                if (transportation != null)
+                    showTransportationAndIsHome();
             }
-
-            showTransportationAndIsHome();
-
         }
     };
 
@@ -366,14 +397,25 @@ public class CheckFamiliarOrNotService extends Service {
         else if(home!=1 && dist>200)
             homeorfaraway = 3;
 
-        try {
-            transportation = TransportationModeStreamGenerator.toCheckFamiliarOrNotTransportationModeDataRecord.getConfirmedActivityType();
+        if(transportation!= null)
+            determineByContextQualtrics(homeorfaraway,transportation);
+
+        /*try {
+//            transportation = TransportationModeStreamGenerator.toCheckFamiliarOrNotTransportationModeDataRecord.getConfirmedActivityType();
+            if(MinukuStreamManager.getInstance().getTransportationModeDataRecord()!=null) {
+                transportation = MinukuStreamManager.getInstance().getTransportationModeDataRecord().getConfirmedActivityType();
+
+                Log.d(TAG,"transportation : "+ transportation);
+
+                if(transportation!= null)
+                    determineByContextQualtrics(homeorfaraway,transportation);
+
+            }
         }catch (Exception e){
             Log.e(TAG,"No TransportationMode, yet.");
             e.printStackTrace();
-        }
+        }*/
 
-        determineByContextQualtrics(homeorfaraway,transportation);
 
     }
 
@@ -534,6 +576,7 @@ public class CheckFamiliarOrNotService extends Service {
                 .setContentTitle(Constants.APP_NAME)
                 .setContentText(notiText)
                 .setStyle(bigTextStyle)
+                .setVibrate(vibrate)
                 .setSmallIcon(R.drawable.self_reflection)
                 .setAutoCancel(true);
         //note.flags |= Notification.FLAG_NO_CLEAR;
@@ -565,7 +608,9 @@ public class CheckFamiliarOrNotService extends Service {
         else if(home!=1 && dist>200)
             inhomeornot = "faraway";
         try {
-            String local_transportation = TransportationModeStreamGenerator.toCheckFamiliarOrNotTransportationModeDataRecord.getConfirmedActivityType();
+//            String local_transportation = TransportationModeStreamGenerator.toCheckFamiliarOrNotTransportationModeDataRecord.getConfirmedActivityType();
+
+            String local_transportation = transportation;
 
             NotificationText = "Current Transportation Mode: " + local_transportation
                     + "\r\n" + "Is_home: " + inhomeornot
@@ -619,6 +664,76 @@ public class CheckFamiliarOrNotService extends Service {
 
     }
 
+    public boolean checkSleepingTime(){
+
+        SharedPreferences sharedPrefs = getSharedPreferences("edu.umich.si.inteco.minuku_2", MODE_PRIVATE);
+        String startSleepingTime = sharedPrefs.getString("SleepingStartTime",null);
+        String endSleepingTime = sharedPrefs.getString("SleepingEndTime",null);
+
+        if(startSleepingTime!=null && endSleepingTime!=null) {
+
+            String[] startSleepingTimeArray = startSleepingTime.split(":");
+            String[] endSleepingTimeArray = endSleepingTime.split(":");
+
+            Log.d(TAG, "startSleepingTime : " + startSleepingTime + " endSleepingTime : " + endSleepingTime);
+
+            Log.d(TAG, "startSleepingHour : " + startSleepingTimeArray[0] + " startSleepingMin : " + startSleepingTimeArray[1]
+                    + " endSleepingHour : " + endSleepingTimeArray[0] + " endSleepingMin : " + endSleepingTimeArray[1]);
+
+            int startSleepingHour = Integer.valueOf(startSleepingTimeArray[0]);
+            int startSleepingMin = Integer.valueOf(startSleepingTimeArray[1]);
+            int endSleepingHour = Integer.valueOf(endSleepingTimeArray[0]);
+            int endSleepingMin = Integer.valueOf(endSleepingTimeArray[1]);
+
+            Log.d(TAG, "int startSleepingHour : " + String.valueOf(startSleepingHour) + " startSleepingMin : " + String.valueOf(startSleepingMin)
+                    + " endSleepingHour : " + String.valueOf(endSleepingHour) + " endSleepingMin : " + String.valueOf(endSleepingMin));
+
+            TimeZone tz = TimeZone.getDefault();
+            java.util.Calendar cal = java.util.Calendar.getInstance(tz);
+            int hour = cal.get(Calendar.HOUR_OF_DAY);
+            int min = cal.get(Calendar.MINUTE);
+            Log.d(TAG, "hour : " + hour + " min : " + min);
+
+            if (startSleepingHour < endSleepingHour) {
+
+                if (hour >= startSleepingHour && hour <= endSleepingHour) {
+
+                    return true;
+                }
+
+            } else if (startSleepingHour == endSleepingHour) {
+
+                if (startSleepingMin < endSleepingMin) {
+
+                    if (min >= startSleepingMin && min <= endSleepingMin)
+                        return true;
+                    else
+                        return false;
+
+                } else if (startSleepingMin == endSleepingMin)
+                    return false;
+                else {
+
+                    if (min >= endSleepingMin && min <= startSleepingMin)
+                        return false;
+                    else
+                        return true;
+
+                }
+
+            } else {
+
+                if (min >= endSleepingMin && min <= startSleepingMin)
+                    return false;
+                else
+                    return true;
+
+            }
+        }
+        return false;
+
+    }
+
     public static boolean isServiceRunning() {
         return serviceInstance != null;
     }
@@ -630,4 +745,5 @@ public class CheckFamiliarOrNotService extends Service {
         long t = cal.getTimeInMillis();
         return t;
     }
+
 }

@@ -40,7 +40,7 @@ import edu.umich.si.inteco.minuku.event.IncrementLoadingProcessCountEvent;
 import edu.umich.si.inteco.minuku.logger.Log;
 import edu.umich.si.inteco.minuku.manager.MinukuDAOManager;
 import edu.umich.si.inteco.minuku.manager.MinukuStreamManager;
-import edu.umich.si.inteco.minuku.model.MoodDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.MoodDataRecord;
 import edu.umich.si.inteco.minuku.stream.ImageStream;
 import edu.umich.si.inteco.minukucore.dao.DAOException;
 import edu.umich.si.inteco.minukucore.event.IsDataExpectedEvent;

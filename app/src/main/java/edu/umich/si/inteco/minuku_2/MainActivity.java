@@ -26,6 +26,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -51,7 +52,9 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.umich.si.inteco.minuku.event.DecrementLoadingProcessCountEvent;
@@ -80,22 +83,23 @@ public class MainActivity extends AppCompatActivity {
 
     public static android.support.design.widget.TabLayout mTabs;
     public static ViewPager mViewPager;
+
     private TextView device_id;
+    private TextView sleepingtime;
+
     private Button ohio_setting, ohio_annotate;
     private String projName = "Ohio";
+
+    private int requestCode_setting = 1;
+    private Bundle requestCode_annotate;
+
+
     //private UserSubmissionStats mUserSubmissionStats;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Creating Main activity");
-
-        int sdk_int = Build.VERSION.SDK_INT;
-        if(sdk_int>=23) {
-            checkAndRequestPermissions();
-        }else{
-            startServiceWork();
-        }
 
         //compensationMessage = (TextView) findViewById(R.id.compensation_message);
 
@@ -116,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         SettingViewPager();
 */
 
+        //** Please set your project name. **//
         whichView(projName);
 
         startService(new Intent(getBaseContext(), BackgroundService.class));
@@ -125,18 +130,21 @@ public class MainActivity extends AppCompatActivity {
         //UUID dummyUUID = UUID.randomUUID();
         EventBus.getDefault().register(this);
 
-        //startService(new Intent(getBaseContext(), CheckFamiliarOrNotService.class));
-
-
-        Context mContext = this;
+//        Context mContext = this;
 
         if(!InstanceManager.isInitialized()) {
             InstanceManager.getInstance(getApplicationContext());
+
             //TODO do we need it?
-
             //loadingProgressDialog = ProgressDialog.show(MainActivity.this, "Loading data", "Fetching information",true);
-       }
+        }
 
+        int sdk_int = Build.VERSION.SDK_INT;
+        if(sdk_int>=23) {
+            checkAndRequestPermissions();
+        }else{
+            startServiceWork();
+        }
 
     }
 
@@ -153,21 +161,55 @@ public class MainActivity extends AppCompatActivity {
             SettingViewPager();
         }else if(projName.equals("Ohio")){
 
+//            requestCode_setting = new Bundle();
+            requestCode_annotate = new Bundle();
+
             setContentView(R.layout.onlydeviceid);
 
-            getDeviceid();
+//            getDeviceid();
 
             ohio_setting = (Button)findViewById(R.id.Setting);
             ohio_setting.setOnClickListener(ohio_settinging);
 
             ohio_annotate = (Button)findViewById(R.id.Annotate);
             ohio_annotate.setOnClickListener(ohio_annotateing);
+
+            sleepingtime = (TextView)findViewById(R.id.sleepingTime);
+            SharedPreferences sharedPrefs = getSharedPreferences("edu.umich.si.inteco.minuku_2", MODE_PRIVATE);
+            String sleepStartTime = sharedPrefs.getString("SleepingStartTime","Please select your start time");
+            String sleepEndTime = sharedPrefs.getString("SleepingEndTime","Please select your end time");
+
+            if(!sleepStartTime.equals("Please select your start time")&&!sleepEndTime.equals("Please select your end time"))
+                sleepingtime.setText("Your sleeping time is from"+"\r\n"+sleepStartTime+" to "+sleepEndTime);
+
             //device_id=(TextView)findViewById(R.id.deviceid);
 
             //device_id.setText("ID = "+Constant.DEVICE_ID);
 
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(projName.equals("Ohio")) {
+            switch (resultCode) {
+                case 1:
+                    String sleepStartTime = data.getExtras().getString("SleepingStartTime");
+                    String sleepEndTime = data.getExtras().getString("SleepingEndTime");
+                    if(!sleepStartTime.equals("Please select your start time")&&!sleepEndTime.equals("Please select your end time"))
+                        sleepingtime.setText("Your sleeping time is from "+"\r\n"+sleepStartTime+" to "+sleepEndTime);
+
+                    SharedPreferences.Editor editor_1 = getSharedPreferences("edu.umich.si.inteco.minuku_2", MODE_PRIVATE).edit();
+                    editor_1.putString("SleepingStartTime",sleepStartTime);
+                    editor_1.commit();
+                    SharedPreferences.Editor editor_2 = getSharedPreferences("edu.umich.si.inteco.minuku_2", MODE_PRIVATE).edit();
+                    editor_2.putString("SleepingEndTime",sleepEndTime);
+                    editor_2.commit();
+                    break;
+
+            }
+        }
     }
 
     //to view settingohio
@@ -185,7 +227,8 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             Log.e(TAG,"settingohio clicked");
 
-            startActivity(new Intent(MainActivity.this, settingohio.class));
+            startActivityForResult(new Intent(MainActivity.this, settingohio.class),requestCode_setting);
+//            startActivity(new Intent(MainActivity.this, settingohio.class));
 
         }
     };
@@ -293,46 +336,9 @@ public class MainActivity extends AppCompatActivity {
         }else{
             startServiceWork();
         }
+
     }
 
-    /*@Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_ID_MULTIPLE_PERMISSIONS: {
-
-                Map<String, Integer> perms = new HashMap<>();
-
-                // Initialize the map with both permissions
-                perms.put(android.Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-                //perms.put(Manifest.permission.SYSTEM_ALERT_WINDOW, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.ACCESS_COARSE_LOCATION, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.BODY_SENSORS, PackageManager.PERMISSION_GRANTED);
-
-                // Fill with actual results from user
-                if (grantResults.length > 0) {
-                    for (int i = 0; i < permissions.length; i++)
-                        perms.put(permissions[i], grantResults[i]);
-                    // Check for both permissions
-                    if (perms.get(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(android.Manifest.permission.BODY_SENSORS) == PackageManager.PERMISSION_GRANTED){
-                        android.util.Log.d("permission", "[permission test]all permission granted");
-                        //permission_ok=1;
-                        startServiceWork();
-                    } else {
-                        Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        }
-    }*/
 
     public void getDeviceid(){
 
@@ -342,14 +348,11 @@ public class MainActivity extends AppCompatActivity {
             Constant.DEVICE_ID = mngr.getDeviceId();
 
             Log.e(TAG,"DEVICE_ID"+Constant.DEVICE_ID+" : "+mngr.getDeviceId());
+            if(projName.equals("Ohio")) {
+               device_id=(TextView)findViewById(R.id.deviceid);
+               device_id.setText("ID = " + Constant.DEVICE_ID);
 
-            if(projName.equals("Ohio"))
-                device_id.setText("ID = "+Constant.DEVICE_ID);
-
-            //TODO where should we place DEVICE_ID ?
-
-            //device_id=(TextView)findViewById(R.id.deviceid);
-            //device_id.setText("ID = "+ Constant.DEVICE_ID);
+            }
 
         }
     }
@@ -371,6 +374,47 @@ public class MainActivity extends AppCompatActivity {
             startService(intent);
         }
 */
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_ID_MULTIPLE_PERMISSIONS: {
+
+                Map<String, Integer> perms = new HashMap<>();
+
+                // Initialize the map with both permissions
+                perms.put(android.Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                //perms.put(Manifest.permission.SYSTEM_ALERT_WINDOW, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.ACCESS_COARSE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.BODY_SENSORS, PackageManager.PERMISSION_GRANTED);
+
+
+
+                // Fill with actual results from user
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < permissions.length; i++)
+                        perms.put(permissions[i], grantResults[i]);
+                    // Check for both permissions
+                    if (perms.get(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.BODY_SENSORS) == PackageManager.PERMISSION_GRANTED){
+                        android.util.Log.d("permission", "[permission test]all permission granted");
+                        //permission_ok=1;
+                        startServiceWork();
+                    } else {
+                        Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        }
     }
 
     private String setDateFormat(int year,int monthOfYear,int dayOfMonth){

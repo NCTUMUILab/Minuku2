@@ -23,6 +23,11 @@
 package edu.umich.si.inteco.minuku.dao;
 
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.Collections;
@@ -31,10 +36,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
+import edu.umich.si.inteco.minuku.DBHelper.DBHelper;
 import edu.umich.si.inteco.minuku.config.Constants;
 import edu.umich.si.inteco.minuku.config.UserPreferences;
 import edu.umich.si.inteco.minuku.logger.Log;
-import edu.umich.si.inteco.minuku.model.LocationDataRecord;
+import edu.umich.si.inteco.minuku.manager.DBManager;
+import edu.umich.si.inteco.minuku.model.DataRecord.LocationDataRecord;
 import edu.umich.si.inteco.minukucore.dao.DAO;
 import edu.umich.si.inteco.minukucore.dao.DAOException;
 import edu.umich.si.inteco.minukucore.user.User;
@@ -47,10 +54,16 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
 
     private String TAG = "LocationDataRecordDAO";
     private String myUserEmail;
+    private DBHelper dBHelper;
     private UUID uuID;
 
     public LocationDataRecordDAO() {
         myUserEmail = UserPreferences.getInstance().getPreference(Constants.KEY_ENCODED_EMAIL);
+    }
+
+    public LocationDataRecordDAO(Context applicationContext){
+
+        dBHelper = DBHelper.getInstance(applicationContext);
     }
 
     @Override
@@ -66,6 +79,48 @@ public class LocationDataRecordDAO implements DAO<LocationDataRecord> {
                 .child(myUserEmail)
                 .child(new SimpleDateFormat("MMddyyyy").format(new Date()).toString());
         locationListRef.push().setValue((LocationDataRecord) entity);*/
+
+        ContentValues values = new ContentValues();
+
+        try {
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
+
+            values.put(DBHelper.TIME, entity.getCreationTime());
+            values.put(DBHelper.latitude_col, entity.getLatitude());
+            values.put(DBHelper.longitude_col, entity.getLongitude());
+            values.put(DBHelper.Accuracy_col, entity.getAccuracy());
+            values.put(DBHelper.Altitude_col, entity.getAltitude());
+            values.put(DBHelper.Speed_col, entity.getSpeed());
+            values.put(DBHelper.Bearing_col, entity.getBearing());
+            values.put(DBHelper.Provider_col, entity.getProvider());
+
+            db.insert(DBHelper.location_table, null, values);
+        }
+        catch(NullPointerException e){
+            e.printStackTrace();
+        }
+        finally {
+            values.clear();
+            DBManager.getInstance().closeDatabase(); // Closing database connection
+        }
+    }
+
+    public void query_counting(){
+        SQLiteDatabase db = DBManager.getInstance().openDatabase();
+        Cursor latitudeCursor = db.rawQuery("SELECT "+ DBHelper.latitude_col +" FROM "+ DBHelper.location_table, null);
+        Cursor longitudeCursor = db.rawQuery("SELECT "+ DBHelper.longitude_col +" FROM "+ DBHelper.location_table, null);
+        Cursor AccuracyCursor = db.rawQuery("SELECT "+ DBHelper.Accuracy_col +" FROM "+ DBHelper.location_table, null);
+
+        int latituderow    = latitudeCursor.getCount();
+        int latitudecol    = latitudeCursor.getColumnCount();
+        int longituderow= longitudeCursor.getCount();
+        int longitudecol= longitudeCursor.getColumnCount();
+        int Accuracyrow = AccuracyCursor.getCount();
+        int Accuracycol = AccuracyCursor.getColumnCount();
+
+        Log.d(TAG,"latituderow : " + latituderow +" latitudecol : " + latitudecol+" longituderow : " + longituderow+
+                " longitudecol : " + longitudecol+" Accuracyrow : " + Accuracyrow+" Accuracycol : " + Accuracycol);
+
     }
 
     @Override

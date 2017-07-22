@@ -20,7 +20,7 @@
  * No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
  */
 
-package edu.umich.si.inteco.minuku.model;
+package edu.umich.si.inteco.minuku.model.DataRecord;
 
 import java.util.Date;
 

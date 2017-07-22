@@ -1,12 +1,13 @@
-package edu.umich.si.inteco.minuku.streamgenerator;
+package edu.umich.si.inteco.minuku.service;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.location.DetectedActivity;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,27 +16,24 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import edu.umich.si.inteco.minuku.config.Constants;
-import edu.umich.si.inteco.minuku.dao.TransportationModeDAO;
-import edu.umich.si.inteco.minuku.manager.MinukuDAOManager;
 import edu.umich.si.inteco.minuku.manager.MinukuStreamManager;
 import edu.umich.si.inteco.minuku.model.DataRecord.ActivityRecognitionDataRecord;
 import edu.umich.si.inteco.minuku.model.DataRecord.TransportationModeDataRecord;
-import edu.umich.si.inteco.minuku.service.TransportationModeService;
-import edu.umich.si.inteco.minuku.stream.TransportationModeStream;
-import edu.umich.si.inteco.minukucore.dao.DAOException;
-import edu.umich.si.inteco.minukucore.exception.StreamAlreadyExistsException;
+import edu.umich.si.inteco.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
+import edu.umich.si.inteco.minuku.streamgenerator.TransportationModeStreamGenerator;
 import edu.umich.si.inteco.minukucore.exception.StreamNotFoundException;
-import edu.umich.si.inteco.minukucore.stream.Stream;
 
 import static edu.umich.si.inteco.minuku.streamgenerator.ActivityRecognitionStreamGenerator.getLocalRecordPool;
 
 /**
- * Created by Lawrence on 2017/5/22.
+ * Created by Lawrence on 2017/7/19.
  */
 
-public class TransportationModeStreamGenerator extends AndroidStreamGenerator<TransportationModeDataRecord> {
+public class TransportationModeService extends Service {
 
-    public final String TAG = "TransportationModeStreamGenerator";
+    public String TAG = "TransportationModeService";
+
+    public static TransportationModeStreamGenerator transportationModeStreamGenerator;
 
     /**ContextSourceType**/
     public static final int CONTEXT_SOURCE_TRANSPORTATION = 0;
@@ -114,120 +112,54 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
     private static long mSuspectTime = 0;
     private static int mCurrentState = STATE_STATIC;
 
-    private Context mContext;
-    private TransportationModeStream mStream;
-    TransportationModeDAO mDAO;
-
-    private final ScheduledExecutorService mScheduledExecutorService;
-    public static final int TransportationMode_REFRESH_FREQUENCY = 10; //1s, 1000ms
-    public static final int BACKGROUND_RECORDING_INITIAL_DELAY = 0;
-
     public ActivityRecognitionStreamGenerator activityRecognitionStreamGenerator;
 
     public static TransportationModeDataRecord toCheckFamiliarOrNotTransportationModeDataRecord;
-//    public TransportationModeDataRecord transportationModeDataRecord;
+    public static TransportationModeDataRecord transportationModeDataRecordFromService;
 
-    private String ConfirmedActvitiyString = "NA";
 
-    public TransportationModeStreamGenerator(Context applicationContext) {
-        super(applicationContext);
-        this.mContext = applicationContext;
-        this.mStream = new TransportationModeStream(Constants.LOCATION_QUEUE_SIZE);
-        this.mDAO = MinukuDAOManager.getInstance().getDaoFor(TransportationModeDataRecord.class);
+    private static Context serviceInstance = null;
+    private Context mContext;
 
-        this.activityRecognitionStreamGenerator = ActivityRecognitionStreamGenerator.getInstance(applicationContext);
+    private ScheduledExecutorService mScheduledExecutorService;
+    public static final int TransportationMode_REFRESH_FREQUENCY = 10; //1s, 1000ms
+    public static final int BACKGROUND_RECORDING_INITIAL_DELAY = 0;
 
-        //transportationModeDataRecordFromService = new TransportationModeDataRecord();
+    public TransportationModeService(){}
+
+    public void onCreate(){
+        super.onCreate();
+        Log.d(TAG, "onCreate");
+
+        serviceInstance = this;
+
+        mContext = this;
 
         mScheduledExecutorService = Executors.newScheduledThreadPool(TransportationMode_REFRESH_FREQUENCY);
 
-
-        this.register();
     }
 
-    @Override
-    public void register() {
-        Log.d(TAG, "Registering with StreamManager.");
-        try {
-            MinukuStreamManager.getInstance().register(mStream, TransportationModeDataRecord.class, this);
-        } catch (StreamNotFoundException streamNotFoundException) {
-            Log.e(TAG, "One of the streams on which LocationDataRecord depends in not found.");
-        } catch (StreamAlreadyExistsException streamAlreadyExistsException) {
-            Log.e(TAG, "Another stream which provides LocationDataRecord is already registered.");
-        }
-    }
-    @Override
-    public Stream<TransportationModeDataRecord> generateNewStream() {
-        return mStream;
+    public static boolean isServiceRunning() {
+        return serviceInstance != null;
     }
 
-    /*private boolean isServiceRunning(){
-        return transportationModeDataRecord != null;
-    }*/
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
+        Log.d("CheckFamiliarOrNotService", "[test service running] going to start the probe service, isServiceRunning:  " + isServiceRunning());
 
-    @Override
-    public boolean updateStream() {
+        startService();
 
-        Log.d(TAG, "Update stream called.");
-
-        TransportationModeDataRecord transportationModeDataRecord =
-                new TransportationModeDataRecord(ConfirmedActvitiyString);
-
-        Log.d(TAG,"updateStream transportationModeDataRecord : " + ConfirmedActvitiyString);
-
-        toCheckFamiliarOrNotTransportationModeDataRecord = transportationModeDataRecord;
-        Log.d(TAG, "transportationModeDataRecordFromService : " + toCheckFamiliarOrNotTransportationModeDataRecord.getConfirmedActivityType());
-
-        mStream.add(transportationModeDataRecord);
-        Log.d(TAG, "TransportationMode to be sent to event bus" + transportationModeDataRecord);
-        // also post an event.
-        EventBus.getDefault().post(transportationModeDataRecord);
-        try {
-            mDAO.add(transportationModeDataRecord);
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
-        } catch (NullPointerException e) { //Sometimes no data is normal
-            e.printStackTrace();
-            return false;
-        }
-
-        return true;
+        return START_STICKY;
     }
 
-    @Override
-    public long getUpdateFrequency() {
-        return 15; //TODO check its efficiency.
-    }
+    public void startService(){
 
-    @Override
-    public void sendStateChangeEvent() {
+        runMainThread();
 
     }
 
-    @Override
-    public void onStreamRegistration() {
+    private void runMainThread(){
 
-        Intent intent = new Intent(mContext, TransportationModeService.class);
-        mContext.startService(intent);
-
-//        startTransportationModeMainThread();
-    }
-
-    public void setTransportationModeDataRecord(String getConfirmedActvitiyString){
-
-        ConfirmedActvitiyString = getConfirmedActvitiyString;
-
-        Log.d(TAG, "ConfirmedActvitiyString : " + ConfirmedActvitiyString);
-
-       /* TransportationModeDataRecord temp = new TransportationModeDataRecord(getConfirmedActvitiyString);
-
-        transportationModeDataRecord = temp;*/
-//        transportationModeDataRecord = new TransportationModeDataRecord(getConfirmedActvitiyString);
-
-    }
-
-    public void startTransportationModeMainThread() {
         mScheduledExecutorService.scheduleAtFixedRate(
                 TransportationModeRunnable,
                 BACKGROUND_RECORDING_INITIAL_DELAY,
@@ -239,9 +171,15 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
         @Override
         public void run() {
 
+            try {
+                transportationModeStreamGenerator = (TransportationModeStreamGenerator) MinukuStreamManager.getInstance().getStreamGeneratorFor(TransportationModeDataRecord.class);
+            }catch(StreamNotFoundException e){
+                Log.e(TAG,"transportationModeStreamGenerator haven't created yet.");
+            }
+
             //Log.e(TAG, String.valueOf(activityRecognitionStreamGenerator.getLastSavedRecord()));
             if(MinukuStreamManager.getInstance().getActivityRecognitionDataRecord()!=null){
-            //if (activityRecognitionStreamGenerator.getLastSavedRecord()!=null) { //maybe need to judge Location's record even "getLastSavedRecord()!=null" ?
+                //if (activityRecognitionStreamGenerator.getLastSavedRecord()!=null) { //maybe need to judge Location's record even "getLastSavedRecord()!=null" ?
 
                 ActivityRecognitionDataRecord recordPool = MinukuStreamManager.getInstance().getActivityRecognitionDataRecord();//activityRecognitionStreamGenerator.getLastSavedRecord();
                 Log.e(TAG,"getID : "+recordPool.getID());
@@ -256,19 +194,24 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
                     //transportationModeDataRecordFromService =
                     //       new TransportationModeDataRecord(getActivityNameFromType(examineTransportation(recordPool)));//;getConfirmedActvitiyString()
 
+                    try {
+                        transportationModeStreamGenerator.setTransportationModeDataRecord(getConfirmedActvitiyString());
+
+                        TransportationModeDataRecord transportationModeDataRecord = new TransportationModeDataRecord(getConfirmedActvitiyString());
+
+                        MinukuStreamManager.getInstance().setTransportationModeDataRecord(transportationModeDataRecord);
+//                    transportationModeDataRecordFromService = new TransportationModeDataRecord(getConfirmedActvitiyString());
+                    }catch(Exception e){
+
+                    }
                 }
             }
             else
-                Log.e(TAG, "ActicityRecogntion's Stream might not start working yet.");
+                Log.e(TAG, "ActivityRecognition's Stream might not start working yet.");
         }
     };
 
-    @Override
-    public void offer(TransportationModeDataRecord dataRecord) {
-
-    }
-
-    public int examineTransportation(ActivityRecognitionDataRecord activityRecognitionDataRecord) {
+    public int examineTransportation(ActivityRecognitionDataRecord activityRecognitionDataRecord){
         //** eat ActivityRecognition and Timestamp to get
         //List<DetectedActivity> probableActivities = record.getProbableActivities();
         //long detectionTime = record.getTimestamp();
@@ -469,6 +412,7 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
 
 
     }
+
 
     public static int getConfirmedActivityType() {
         return mConfirmedActivityType;
@@ -777,4 +721,11 @@ public class TransportationModeStreamGenerator extends AndroidStreamGenerator<Tr
         return TRANSPORTATION_MODE_NAME_IN_NO_TRANSPORTATION;
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 }
+
+

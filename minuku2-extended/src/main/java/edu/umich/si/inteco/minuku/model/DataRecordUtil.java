@@ -2,6 +2,8 @@ package edu.umich.si.inteco.minuku.model;
 
 import edu.umich.si.inteco.minuku.logger.Log;
 import edu.umich.si.inteco.minuku.manager.MinukuStreamManager;
+import edu.umich.si.inteco.minuku.model.DataRecord.LocationDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.SemanticLocationDataRecord;
 import edu.umich.si.inteco.minukucore.exception.StreamNotFoundException;
 
 /**

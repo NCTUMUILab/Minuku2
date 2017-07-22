@@ -20,35 +20,44 @@
  * No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
  */
 
-package edu.umich.si.inteco.minuku.model;
+package edu.umich.si.inteco.minuku.model.DataRecord;
 
 import java.util.Date;
 
 import edu.umich.si.inteco.minukucore.model.DataRecord;
 
 /**
- * Created by shriti on 7/19/16.
+ * Created by neerajkumar on 7/21/16.
  */
-public class ImageDataRecord implements DataRecord {
+public class SemanticLocationDataRecord implements DataRecord {
 
-    public String base64Data;
-    public long creationTime;
+    public String mSemanticLocation;
+    public long mCreationTime;
 
-    public ImageDataRecord() {
+    public SemanticLocationDataRecord() {
 
     }
 
-    public ImageDataRecord(String base64Data) {
-        this.base64Data = base64Data;
-        this.creationTime = new Date().getTime();;
+    public SemanticLocationDataRecord(String aSemanticLocation) {
+        this.mCreationTime = new Date().getTime();
+        this.mSemanticLocation = aSemanticLocation;
     }
 
-    public String getBase64Data() {
-        return base64Data;
+    public void setSemanticLocation(String mSemanticLocation) {
+        this.mSemanticLocation = mSemanticLocation;
+    }
+
+    public void setCreationTime(long mCreationTime) {
+        this.mCreationTime = mCreationTime;
+    }
+
+    public String getSemanticLocation() {
+        return mSemanticLocation;
     }
 
     @Override
     public long getCreationTime() {
-        return creationTime;
+        return mCreationTime;
     }
+
 }

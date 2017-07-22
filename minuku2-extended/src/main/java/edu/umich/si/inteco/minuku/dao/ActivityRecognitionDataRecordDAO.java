@@ -1,5 +1,7 @@
 package edu.umich.si.inteco.minuku.dao;
 
+import android.content.Context;
+
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
@@ -8,7 +10,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-import edu.umich.si.inteco.minuku.model.ActivityRecognitionDataRecord;
+import edu.umich.si.inteco.minuku.DBHelper.DBHelper;
+import edu.umich.si.inteco.minuku.logger.Log;
+import edu.umich.si.inteco.minuku.model.DataRecord.ActivityRecognitionDataRecord;
 import edu.umich.si.inteco.minukucore.dao.DAO;
 import edu.umich.si.inteco.minukucore.dao.DAOException;
 import edu.umich.si.inteco.minukucore.user.User;
@@ -19,9 +23,13 @@ import edu.umich.si.inteco.minukucore.user.User;
 
 public class ActivityRecognitionDataRecordDAO implements DAO<ActivityRecognitionDataRecord> {
 
+    final private String TAG = "ActivityRecognitionDataRecordDAO";
+
     File file;
     BufferedWriter fw;
     JSONObject obj;
+    private DBHelper dBHelper;
+
 
     public ActivityRecognitionDataRecordDAO(){
         //file = new File(Context.getFilesDir(), filename);
@@ -29,7 +37,11 @@ public class ActivityRecognitionDataRecordDAO implements DAO<ActivityRecognition
         //fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file,true), "UTF-8"));
         obj = new JSONObject();
 
+    }
 
+    public ActivityRecognitionDataRecordDAO(Context applicationContext){
+
+        dBHelper = DBHelper.getInstance(applicationContext);
 
     }
 
@@ -41,36 +53,45 @@ public class ActivityRecognitionDataRecordDAO implements DAO<ActivityRecognition
     @Override
     public void add(ActivityRecognitionDataRecord entity) throws DAOException {
 
+        Log.d(TAG, "Adding ActivityRecognition data record.");
+        //TODO fix it please.
         //TODO store in Json file.
         //TODO (5/26) Need to store in sqllite first.
-        /*
+
+        /*ContentValues values = new ContentValues();
+
         try {
-            obj.put(String.valueOf(entity.getCreationTime()), entity.getMostProbableActivity().toString());
+            SQLiteDatabase db = DBManager.getInstance().openDatabase();
 
-            fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file,true), "UTF-8"));
+            values.put(DBHelper.TIME, entity.getCreationTime());
+            values.put(DBHelper.MostProbableActivity_col, entity.getMostProbableActivity().toString());
+            values.put(DBHelper.ProbableActivities_col, entity.getProbableActivities().toString());
 
-            fw.write(obj.toString());
+            db.insert(DBHelper.activityRecognition_table, null, values);
+        }
+        catch(NullPointerException e){
+            e.printStackTrace();
+        }
+        finally {
+            values.clear();
+            DBManager.getInstance().closeDatabase(); // Closing database connection
+        }
+*/
+    }
 
-            fw.newLine();
+    public void query_counting(){
+        /*SQLiteDatabase db = DBManager.getInstance().openDatabase();
+        Cursor MostProbableActivityCursor = db.rawQuery("SELECT "+ DBHelper.MostProbableActivity_col +" FROM "+ DBHelper.activityRecognition_table, null);
+        Cursor ProbableActivitiesCursor = db.rawQuery("SELECT "+ DBHelper.ProbableActivities_col +" FROM "+ DBHelper.activityRecognition_table, null);
 
-            fw.flush();
+        int MostProbableActivityrow    = MostProbableActivityCursor.getCount();
+        int MostProbableActivitycol    = MostProbableActivityCursor.getColumnCount();
+        int ProbableActivitiesrow= ProbableActivitiesCursor.getCount();
+        int ProbableActivitiescol= ProbableActivitiesCursor.getColumnCount();
 
-
-        }catch (JSONException e){
-
-        }catch (IOException e){
-
-        }finally {
-            if (fw != null) {
-                try {
-                    fw.close();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }*/
-
+        Log.d(TAG,"MostProbableActivityrow : " + MostProbableActivityrow +" MostProbableActivitycol : " + MostProbableActivitycol+
+                " ProbableActivitiesrow : " + ProbableActivitiesrow+ " ProbableActivitiescol : " + ProbableActivitiescol);
+*/
     }
 
     @Override

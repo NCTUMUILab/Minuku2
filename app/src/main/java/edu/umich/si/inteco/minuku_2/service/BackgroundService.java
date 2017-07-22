@@ -31,6 +31,7 @@ import android.os.IBinder;
 import edu.umich.si.inteco.minuku.config.Constants;
 import edu.umich.si.inteco.minuku.logger.Log;
 import edu.umich.si.inteco.minuku.manager.MinukuStreamManager;
+import edu.umich.si.inteco.minuku_2.manager.InstanceManager;
 
 public class BackgroundService extends Service {
 
@@ -40,6 +41,7 @@ public class BackgroundService extends Service {
     public BackgroundService() {
         super();
         streamManager = MinukuStreamManager.getInstance();
+
     }
 
     @Override
@@ -61,6 +63,11 @@ public class BackgroundService extends Service {
         note.flags |= Notification.FLAG_NO_CLEAR;
         startForeground( 42, note );
 */
+
+        if(!InstanceManager.isInitialized()) {
+            InstanceManager.getInstance(this);
+        }
+
         return START_STICKY_COMPATIBILITY;
     }
 

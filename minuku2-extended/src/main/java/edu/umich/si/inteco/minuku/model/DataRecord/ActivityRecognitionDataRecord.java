@@ -1,4 +1,4 @@
-package edu.umich.si.inteco.minuku.model;
+package edu.umich.si.inteco.minuku.model.DataRecord;
 
 import com.google.android.gms.location.DetectedActivity;
 

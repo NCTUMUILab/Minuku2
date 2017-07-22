@@ -2,6 +2,7 @@ package edu.umich.si.inteco.minuku_2.controller.Ohio;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -58,8 +59,15 @@ public class settingohio extends AppCompatActivity {
                 Toast.makeText(settingohio.this,"Please select your start time!!",Toast.LENGTH_SHORT);
             else if(endtime.getText().equals("Please select your end time"))
                 Toast.makeText(settingohio.this,"Please select your end time!!",Toast.LENGTH_SHORT);
-            else
+            else {
+                Intent intent = getIntent();
+                Bundle bundle = new Bundle();
+                bundle.putString("SleepingStartTime",starttime.getText().toString());
+                bundle.putString("SleepingEndTime",endtime.getText().toString());
+                intent.putExtras(bundle);
+                setResult(1, intent);
                 settingohio.this.finish();
+            }
         }
     };
 
@@ -83,6 +91,11 @@ public class settingohio extends AppCompatActivity {
                         min = "0" + String.valueOf(minute);
 
                     starttime.setText( hour + ":" + min);
+
+                    /*SharedPreferences.Editor editor = getSharedPreferences("edu.umich.si.inteco.minuku_2", MODE_PRIVATE).edit();
+                    editor.putString("SleepingStartTime",starttime.getText().toString());
+                    editor.commit();*/
+
                 }
             }, hour, minute, false).show();
 
@@ -108,7 +121,12 @@ public class settingohio extends AppCompatActivity {
                     if(minute<10)
                         min = "0" + String.valueOf(minute);
 
-                    endtime.setText( hourOfDay + ":" + minute);
+                    endtime.setText( hour + ":" + min);
+
+                    /*SharedPreferences.Editor editor = getSharedPreferences("edu.umich.si.inteco.minuku_2", MODE_PRIVATE).edit();
+                    editor.putString("SleepingEndTime",endtime.getText().toString());
+                    editor.commit();*/
+
                 }
             }, hour, minute, false).show();
         }

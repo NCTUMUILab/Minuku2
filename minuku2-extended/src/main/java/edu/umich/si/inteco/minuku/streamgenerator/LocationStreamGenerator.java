@@ -49,7 +49,7 @@ import edu.umich.si.inteco.minuku.event.IncrementLoadingProcessCountEvent;
 import edu.umich.si.inteco.minuku.logger.Log;
 import edu.umich.si.inteco.minuku.manager.MinukuDAOManager;
 import edu.umich.si.inteco.minuku.manager.MinukuStreamManager;
-import edu.umich.si.inteco.minuku.model.LocationDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.LocationDataRecord;
 import edu.umich.si.inteco.minuku.stream.LocationStream;
 import edu.umich.si.inteco.minukucore.dao.DAOException;
 import edu.umich.si.inteco.minukucore.exception.StreamAlreadyExistsException;
@@ -70,8 +70,20 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
+    /**Properties for Record**/
+    public static final String RECORD_DATA_PROPERTY_LATITUDE = "Latitude";
+    public static final String RECORD_DATA_PROPERTY_LONGITUDE = "Longitude";
+    public static final String RECORD_DATA_PROPERTY_ACCURACY = "Accuracy";
+    public static final String RECORD_DATA_PROPERTY_ALTITUDE = "Altitude";
+    public static final String RECORD_DATA_PROPERTY_PROVIDER = "Provider";
+    public static final String RECORD_DATA_PROPERTY_SPEED = "Speed";
+    public static final String RECORD_DATA_PROPERTY_BEARING = "Bearing";
+    public static final String RECORD_DATA_PROPERTY_EXTRAS = "Extras";
+
     private AtomicDouble latitude;
     private AtomicDouble longitude;
+
+    private Location location;
 
     LocationDataRecordDAO mDAO;
 
@@ -83,6 +95,10 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
         this.mDAO = MinukuDAOManager.getInstance().getDaoFor(LocationDataRecord.class);
         this.latitude = new AtomicDouble();
         this.longitude = new AtomicDouble();
+
+        this.latitude.set(-999.0);
+        this.longitude.set(-999.0);
+
         this.register();
     }
 
@@ -161,17 +177,57 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
                 (float)latitude.get(),
                 (float)longitude.get());
         Log.e(TAG,"latitude : "+latitude.get()+" longitude : "+longitude.get());
-        toCheckFamiliarOrNotLocationDataRecord = locationDataRecord;
-        mStream.add(locationDataRecord);
-        Log.d(TAG, "Location to be sent to event bus" + locationDataRecord);
 
-        // also post an event.
-        EventBus.getDefault().post(locationDataRecord);
+        /*
+        JSONObject data = new JSONObject();
+
+        //add location to data
         try {
-            mDAO.add(locationDataRecord);
-        } catch (DAOException e) {
+            data.put(RECORD_DATA_PROPERTY_LATITUDE, location.getLatitude());
+            data.put(RECORD_DATA_PROPERTY_LONGITUDE, location.getLongitude());
+            data.put(RECORD_DATA_PROPERTY_ALTITUDE, location.getAltitude());
+            data.put(RECORD_DATA_PROPERTY_ACCURACY, location.getAccuracy());
+            data.put(RECORD_DATA_PROPERTY_SPEED, location.getSpeed());
+            data.put(RECORD_DATA_PROPERTY_BEARING, location.getBearing());
+            data.put(RECORD_DATA_PROPERTY_PROVIDER, location.getProvider());
+
+        } catch (JSONException e) {
             e.printStackTrace();
-            return false;
+        }
+
+        LocationDataRecord jsonlocationDataRecord = new LocationDataRecord(data);
+*/
+
+        if(location!=null) {
+            LocationDataRecord newlocationDataRecord = new LocationDataRecord(
+                    (float) latitude.get(),
+                    (float) longitude.get(),
+                    location.getAccuracy(),
+                    (float) location.getAltitude(),
+                    location.getSpeed(),
+                    location.getBearing(),
+                    location.getProvider());
+
+
+            MinukuStreamManager.getInstance().setLocationDataRecord(newlocationDataRecord);
+            toCheckFamiliarOrNotLocationDataRecord = newlocationDataRecord;
+
+            mStream.add(newlocationDataRecord);
+            Log.d(TAG, "Location to be sent to event bus" + newlocationDataRecord);
+
+            // also post an event.
+            EventBus.getDefault().post(newlocationDataRecord);
+            try {
+
+//            mDAO.add(locationDataRecord);
+                mDAO.add(newlocationDataRecord);
+
+                mDAO.query_counting();
+
+            } catch (DAOException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
         return true;
     }
@@ -211,11 +267,16 @@ public class LocationStreamGenerator extends AndroidStreamGenerator<LocationData
                     Log.d(TAG, "Location is accurate upto 50 meters");
                     this.latitude.set(location.getLatitude());
                     this.longitude.set(location.getLongitude());
+
+                    //**** additional
+                    this.location = location;
+
                     updateStream();
                 }
             } else {
                 Log.d(TAG, "Location is not accurate");
             }
+
         }
     }
 

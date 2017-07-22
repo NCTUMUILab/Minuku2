@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-import edu.umich.si.inteco.minuku_2.DBHelper.DBHelper;
-import edu.umich.si.inteco.minuku_2.manager.DBManager;
+import edu.umich.si.inteco.minuku.DBHelper.DBHelper;
+import edu.umich.si.inteco.minuku.manager.DBManager;
 import edu.umich.si.inteco.minuku_2.model.CheckFamiliarOrNotDataRecord;
 import edu.umich.si.inteco.minukucore.dao.DAO;
 import edu.umich.si.inteco.minukucore.dao.DAOException;
@@ -29,7 +29,7 @@ public class CheckFamiliarOrNotDAO implements DAO<CheckFamiliarOrNotDataRecord>{
     public CheckFamiliarOrNotDAO(Context applicationContext){
         this.mContext = applicationContext;
 
-        dBHelper = new DBHelper(applicationContext);
+        dBHelper = DBHelper.getInstance(applicationContext);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class CheckFamiliarOrNotDAO implements DAO<CheckFamiliarOrNotDataRecord>{
             values.put(DBHelper.neighbor_col, entity.getneighbor());
             values.put(DBHelper.outside_col, entity.getoutside());
 
-            db.insertOrThrow(DBHelper.checkFamiliarOrNot_table, null, values);
+            db.insert(DBHelper.checkFamiliarOrNot_table, null, values);
         }
         catch(NullPointerException e){
             e.printStackTrace();

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-import edu.umich.si.inteco.minuku.model.TransportationModeDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.TransportationModeDataRecord;
 import edu.umich.si.inteco.minukucore.dao.DAO;
 import edu.umich.si.inteco.minukucore.dao.DAOException;
 import edu.umich.si.inteco.minukucore.user.User;

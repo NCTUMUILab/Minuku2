@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import edu.umich.si.inteco.minuku.DBHelper.DBHelper;
 import edu.umich.si.inteco.minuku.dao.ActivityRecognitionDataRecordDAO;
 import edu.umich.si.inteco.minuku.dao.LocationDataRecordDAO;
 import edu.umich.si.inteco.minuku.dao.TransportationModeDAO;
@@ -42,9 +43,9 @@ import edu.umich.si.inteco.minuku.event.IncrementLoadingProcessCountEvent;
 import edu.umich.si.inteco.minuku.logger.Log;
 import edu.umich.si.inteco.minuku.manager.MinukuDAOManager;
 import edu.umich.si.inteco.minuku.manager.MinukuSituationManager;
-import edu.umich.si.inteco.minuku.model.ActivityRecognitionDataRecord;
-import edu.umich.si.inteco.minuku.model.LocationDataRecord;
-import edu.umich.si.inteco.minuku.model.TransportationModeDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.ActivityRecognitionDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.LocationDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.TransportationModeDataRecord;
 import edu.umich.si.inteco.minuku.model.UserSubmissionStats;
 import edu.umich.si.inteco.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.LocationStreamGenerator;
@@ -92,9 +93,12 @@ public class InstanceManager {
     private void initialize() {
         // Add all initialization code here.
         // DAO initialization stuff
+
+        DBHelper dBHelper = new DBHelper(getApplicationContext());
+
         MinukuDAOManager daoManager = MinukuDAOManager.getInstance();
         //For location
-        LocationDataRecordDAO locationDataRecordDAO = new LocationDataRecordDAO();
+        LocationDataRecordDAO locationDataRecordDAO = new LocationDataRecordDAO(getApplicationContext());
         daoManager.registerDaoFor(LocationDataRecord.class, locationDataRecordDAO);
 /*
         // SemanticLocation
@@ -134,7 +138,7 @@ public class InstanceManager {
         daoManager.registerDaoFor(PromptMissedReportsQnADataRecord.class, promptMissedReportsQnADAO);
 */
         //TODO build new DAO here.
-        ActivityRecognitionDataRecordDAO activityRecognitionDataRecordDAO = new ActivityRecognitionDataRecordDAO();
+        ActivityRecognitionDataRecordDAO activityRecognitionDataRecordDAO = new ActivityRecognitionDataRecordDAO(getApplicationContext());
         daoManager.registerDaoFor(ActivityRecognitionDataRecord.class, activityRecognitionDataRecordDAO);
 
         TransportationModeDAO transportationModeDAO = new TransportationModeDAO();

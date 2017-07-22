@@ -26,13 +26,12 @@ package edu.umich.si.inteco.minuku_2.situation;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 
 import edu.umich.si.inteco.minuku.config.Constants;
 import edu.umich.si.inteco.minuku.config.UserPreferences;
 import edu.umich.si.inteco.minuku.logger.Log;
 import edu.umich.si.inteco.minuku.manager.MinukuSituationManager;
-import edu.umich.si.inteco.minuku.model.MoodDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.MoodDataRecord;
 import edu.umich.si.inteco.minuku_2.event.MoodDataExpectedActionEvent;
 import edu.umich.si.inteco.minukucore.event.ActionEvent;
 import edu.umich.si.inteco.minukucore.event.IsDataExpectedEvent;

@@ -39,7 +39,7 @@ import edu.umich.si.inteco.minuku.event.IncrementLoadingProcessCountEvent;
 import edu.umich.si.inteco.minuku.logger.Log;
 import edu.umich.si.inteco.minuku.manager.MinukuDAOManager;
 import edu.umich.si.inteco.minuku.manager.MinukuStreamManager;
-import edu.umich.si.inteco.minuku.model.AnnotatedImageDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.AnnotatedImageDataRecord;
 import edu.umich.si.inteco.minuku.stream.AnnotatedImageStream;
 import edu.umich.si.inteco.minukucore.dao.DAOException;
 import edu.umich.si.inteco.minukucore.event.NoDataChangeEvent;

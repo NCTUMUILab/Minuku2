@@ -3,7 +3,6 @@ package edu.umich.si.inteco.minuku.streamgenerator;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -26,7 +25,7 @@ import edu.umich.si.inteco.minuku.config.Constants;
 import edu.umich.si.inteco.minuku.dao.ActivityRecognitionDataRecordDAO;
 import edu.umich.si.inteco.minuku.manager.MinukuDAOManager;
 import edu.umich.si.inteco.minuku.manager.MinukuStreamManager;
-import edu.umich.si.inteco.minuku.model.ActivityRecognitionDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.ActivityRecognitionDataRecord;
 import edu.umich.si.inteco.minuku.service.ActivityRecognitionService;
 import edu.umich.si.inteco.minuku.stream.ActivityRecognitionStream;
 import edu.umich.si.inteco.minukucore.dao.DAOException;
@@ -67,6 +66,8 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
     private Context mContext;
     private ActivityRecognitionStream mStream;
     ActivityRecognitionDataRecordDAO mDAO;
+
+    private ActivityRecognitionDataRecord activityRecognitionDataRecord;
 
     /** KeepAlive **/
     protected int KEEPALIVE_MINUTE = 3;
@@ -201,21 +202,25 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
     @Override
     public boolean updateStream() {
         Log.e(TAG, "Update stream called.");
-        ActivityRecognitionDataRecord activityRecognitionDataRecord
-               = new ActivityRecognitionDataRecord(sMostProbableActivity,sLatestDetectionTime);
-        mStream.add(activityRecognitionDataRecord);
-        Log.e(TAG, "Location to be sent to event bus" + activityRecognitionDataRecord);
 
-        /*
-        *  update data in DataRecord
-        * */
+        /*ActivityRecognitionDataRecord activityRecognitionDataRecord
+               = new ActivityRecognitionDataRecord(sMostProbableActivity,sLatestDetectionTime);*/
 
-        EventBus.getDefault().post(activityRecognitionDataRecord);
-        try {
-            mDAO.add(activityRecognitionDataRecord);
-        } catch (DAOException e) {
-            e.printStackTrace();
-            return false;
+        if(activityRecognitionDataRecord!=null) {
+            mStream.add(activityRecognitionDataRecord);
+            Log.e(TAG, "Location to be sent to event bus" + activityRecognitionDataRecord);
+
+            EventBus.getDefault().post(activityRecognitionDataRecord);
+            try {
+
+                mDAO.add(activityRecognitionDataRecord);
+
+                mDAO.query_counting();
+            } catch (DAOException e) {
+                e.printStackTrace();
+                return false;
+            }
+
         }
         return true;
     }
@@ -368,6 +373,10 @@ public class ActivityRecognitionStreamGenerator extends AndroidStreamGenerator<A
         Log.e(TAG,"size : "+mLocalRecordPool.size());
         MinukuStreamManager.getInstance().setActivityRecognitionDataRecord(mLocalRecordPool.get(mLocalRecordPool.size()-1));
         Log.e(TAG,"CreateTime:" + mLocalRecordPool.get(mLocalRecordPool.size()-1).getCreationTime()+ " MostProbableActivity:"+mLocalRecordPool.get(mLocalRecordPool.size()-1).getMostProbableActivity());
+
+
+        this.activityRecognitionDataRecord = activityRecognitionDataRecord;
+        updateStream();
 
     }
 

@@ -1,11 +1,12 @@
-package edu.umich.si.inteco.minuku_2.manager;
+package edu.umich.si.inteco.minuku.manager;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import edu.umich.si.inteco.minuku_2.DBHelper.DBHelper;
+import edu.umich.si.inteco.minuku.DBHelper.DBHelper;
+
 
 /**
  * Created by Lawrence on 2017/6/6.
@@ -23,7 +24,7 @@ public class DBManager  {
         if (instance == null) {
             instance = new DBManager();
             mLocalDBHelper = helper;
-//            Log.d(LOG_TAG, "[test instantiate db]  after instanstiate the database");
+//            Log.d(TAG, "[test instantiate db]  after instanstiate the database");
         }
 
     }

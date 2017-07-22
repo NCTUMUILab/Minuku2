@@ -31,8 +31,10 @@ import java.util.List;
 import java.util.Map;
 
 import edu.umich.si.inteco.minuku.logger.Log;
-import edu.umich.si.inteco.minuku.model.ActivityRecognitionDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.ActivityRecognitionDataRecord;
+import edu.umich.si.inteco.minuku.model.DataRecord.LocationDataRecord;
 import edu.umich.si.inteco.minuku.model.MinukuStreamSnapshot;
+import edu.umich.si.inteco.minuku.model.DataRecord.TransportationModeDataRecord;
 import edu.umich.si.inteco.minukucore.event.IsDataExpectedEvent;
 import edu.umich.si.inteco.minukucore.event.NoDataChangeEvent;
 import edu.umich.si.inteco.minukucore.event.StateChangeEvent;
@@ -64,6 +66,8 @@ public class MinukuStreamManager implements StreamManager {
     protected Map<Class, StreamGenerator> mRegisteredStreamGenerators;
 
     private ActivityRecognitionDataRecord activityRecognitionDataRecord;
+    private TransportationModeDataRecord transportationModeDataRecord;
+    private LocationDataRecord locationDataRecord;
 
     private static int counter = 0;
 
@@ -210,4 +214,32 @@ public class MinukuStreamManager implements StreamManager {
     public ActivityRecognitionDataRecord getActivityRecognitionDataRecord(){
         return activityRecognitionDataRecord;
     }
+
+    public void setTransportationModeDataRecord(TransportationModeDataRecord transportationModeDataRecord){
+        this.transportationModeDataRecord = transportationModeDataRecord;
+    }
+
+    public TransportationModeDataRecord getTransportationModeDataRecord(){
+        return transportationModeDataRecord;
+    }
+
+    public void setLocationDataRecord(LocationDataRecord locationDataRecord){
+        this.locationDataRecord = locationDataRecord;
+    }
+
+    public LocationDataRecord getLocationDataRecord(){
+        return locationDataRecord;
+    }
+
+/*
+    public void setDataRecord(Class<?> t) {
+
+    }
+
+    public <T extends DataRecord> getDataRecord(){
+
+        return ;
+    }
+*/
+
 }

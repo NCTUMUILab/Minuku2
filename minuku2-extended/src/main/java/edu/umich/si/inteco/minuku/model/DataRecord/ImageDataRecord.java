@@ -20,37 +20,35 @@
  * No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
  */
 
-package edu.umich.si.inteco.minuku.model;
+package edu.umich.si.inteco.minuku.model.DataRecord;
+
+import java.util.Date;
+
+import edu.umich.si.inteco.minukucore.model.DataRecord;
 
 /**
- * Created by shriti on 7/21/16.
+ * Created by shriti on 7/19/16.
  */
-public class AnnotatedImageDataRecord extends ImageDataRecord {
+public class ImageDataRecord implements DataRecord {
 
-    public String imageAnnotation;
-    public String imageSource;
+    public String base64Data;
+    public long creationTime;
 
-    public AnnotatedImageDataRecord() {
-        super();
+    public ImageDataRecord() {
+
     }
 
-    public AnnotatedImageDataRecord(String base64Data, String annotation, String source) {
-        super(base64Data);
-        this.imageAnnotation = annotation;
-        this.imageSource = source;
+    public ImageDataRecord(String base64Data) {
+        this.base64Data = base64Data;
+        this.creationTime = new Date().getTime();;
     }
 
-    public String getImageAnnotation() {
-        return imageAnnotation;
+    public String getBase64Data() {
+        return base64Data;
     }
 
-    public String getImageSource() {return imageSource; }
-
-    public void setImageAnnotation(String imageAnnotation) {
-        this.imageAnnotation = imageAnnotation;
-    }
-
-    public void setImageSource(String imageSource) {
-        this.imageSource = imageSource;
+    @Override
+    public long getCreationTime() {
+        return creationTime;
     }
 }
