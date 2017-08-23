@@ -49,6 +49,8 @@ import edu.umich.si.inteco.minuku.model.DataRecord.TransportationModeDataRecord;
 import edu.umich.si.inteco.minuku.model.UserSubmissionStats;
 import edu.umich.si.inteco.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.LocationStreamGenerator;
+import edu.umich.si.inteco.minuku.streamgenerator.BatteryStreamGenerator;
+import edu.umich.si.inteco.minuku.streamgenerator.RingerStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.TransportationModeStreamGenerator;
 import edu.umich.si.inteco.minuku_2.dao.CheckFamiliarOrNotDAO;
 import edu.umich.si.inteco.minuku_2.model.CheckFamiliarOrNotDataRecord;
@@ -169,6 +171,11 @@ public class InstanceManager {
 
         TransportationModeStreamGenerator transportationModeStreamGenerator =
                 new TransportationModeStreamGenerator(getApplicationContext());
+        BatteryStreamGenerator batteryStreamGenerator =
+                new BatteryStreamGenerator(getApplicationContext());
+
+        RingerStreamGenerator ringerStreamGenerator =
+                new RingerStreamGenerator(getApplicationContext());
 
         CheckFamiliarOrNotStreamGenerator checkFamiliarOrNotStreamGenerator =
                 new CheckFamiliarOrNotStreamGenerator(getApplicationContext());
