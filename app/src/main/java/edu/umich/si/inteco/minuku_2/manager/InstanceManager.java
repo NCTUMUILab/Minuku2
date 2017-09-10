@@ -51,11 +51,11 @@ import edu.umich.si.inteco.minuku.streamgenerator.ActivityRecognitionStreamGener
 import edu.umich.si.inteco.minuku.streamgenerator.LocationStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.BatteryStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.RingerStreamGenerator;
+import edu.umich.si.inteco.minuku.streamgenerator.TelephonyStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.TransportationModeStreamGenerator;
 import edu.umich.si.inteco.minuku_2.dao.CheckFamiliarOrNotDAO;
 import edu.umich.si.inteco.minuku_2.model.CheckFamiliarOrNotDataRecord;
 import edu.umich.si.inteco.minuku_2.question.QuestionConfig;
-import edu.umich.si.inteco.minuku_2.streamgenerator.CheckFamiliarOrNotStreamGenerator;
 
 /**
  * Created by neerajkumar on 8/28/16.
@@ -177,8 +177,11 @@ public class InstanceManager {
         RingerStreamGenerator ringerStreamGenerator =
                 new RingerStreamGenerator(getApplicationContext());
 
-        CheckFamiliarOrNotStreamGenerator checkFamiliarOrNotStreamGenerator =
-                new CheckFamiliarOrNotStreamGenerator(getApplicationContext());
+        TelephonyStreamGenerator telephonyStreamGenerator =
+                new TelephonyStreamGenerator(getApplicationContext());
+
+        //CheckFamiliarOrNotStreamGenerator checkFamiliarOrNotStreamGenerator =
+                //new CheckFamiliarOrNotStreamGenerator(getApplicationContext());
 
         // All situations must be registered AFTER the stream generators are registers.
         MinukuSituationManager situationManager = MinukuSituationManager.getInstance();
