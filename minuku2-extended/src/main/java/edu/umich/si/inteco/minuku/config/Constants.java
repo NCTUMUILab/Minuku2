@@ -96,8 +96,10 @@ public class Constants {
     public static final String EOD_DIARY_PROMPT_TITLE = "Diary entry";
     public static final String EOD_DIARY_PROMPT_MESSAGE = "Tap here to complete today's diary.";
 
-
-
+    public static final int CONTEXT_SOURCE_INVALID_VALUE_INTEGER = -9999;
+    public static final long CONTEXT_SOURCE_INVALID_VALUE_LONG_INTEGER = -9999;
+    public static final long CONTEXT_SOURCE_INVALID_VALUE_FLOAT = -9999;
+    public static final int SENSOR_QUEUE_SIZE = 20;
 
     //default queue size
     public static final int DEFAULT_QUEUE_SIZE = 20;

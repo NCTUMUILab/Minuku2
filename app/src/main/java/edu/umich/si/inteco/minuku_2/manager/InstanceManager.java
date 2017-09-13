@@ -48,9 +48,10 @@ import edu.umich.si.inteco.minuku.model.DataRecord.LocationDataRecord;
 import edu.umich.si.inteco.minuku.model.DataRecord.TransportationModeDataRecord;
 import edu.umich.si.inteco.minuku.model.UserSubmissionStats;
 import edu.umich.si.inteco.minuku.streamgenerator.ActivityRecognitionStreamGenerator;
-import edu.umich.si.inteco.minuku.streamgenerator.LocationStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.BatteryStreamGenerator;
+import edu.umich.si.inteco.minuku.streamgenerator.LocationStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.RingerStreamGenerator;
+import edu.umich.si.inteco.minuku.streamgenerator.SensorStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.TelephonyStreamGenerator;
 import edu.umich.si.inteco.minuku.streamgenerator.TransportationModeStreamGenerator;
 import edu.umich.si.inteco.minuku_2.dao.CheckFamiliarOrNotDAO;
@@ -179,7 +180,8 @@ public class InstanceManager {
 
         TelephonyStreamGenerator telephonyStreamGenerator =
                 new TelephonyStreamGenerator(getApplicationContext());
-
+        SensorStreamGenerator sensorStreamGenerator =
+                new SensorStreamGenerator(getApplicationContext());
         //CheckFamiliarOrNotStreamGenerator checkFamiliarOrNotStreamGenerator =
                 //new CheckFamiliarOrNotStreamGenerator(getApplicationContext());
 
