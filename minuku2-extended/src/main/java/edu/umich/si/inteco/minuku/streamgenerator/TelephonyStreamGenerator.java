@@ -14,7 +14,6 @@ import edu.umich.si.inteco.minukucore.exception.StreamNotFoundException;
 import edu.umich.si.inteco.minukucore.stream.Stream;
 
 import static edu.umich.si.inteco.minuku.manager.MinukuStreamManager.getInstance;
-
 /**
  * Created by Lucy on 2017/9/6.
  */
@@ -24,12 +23,26 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
     private String TAG = "TelephonyStreamGenerator";
     private Stream mStream;
     private TelephonyManager telephonyManager;
-    private SignalStrength signalStrength;
+    private String carrierName;
+    private int LTESignalStrength_dbm;
+    private int LTESignalStrength_asu;
+    private int GsmSignalStrength;
+    private int CdmaSignalStrenth;
+    private int CdmaSignalStrenthLevel; // 1, 2, 3, 4
+    private int GeneralSignalStrength;
+    private boolean isGSM = false;
 
     public TelephonyStreamGenerator (Context applicationContext) {
         super(applicationContext);
         this.mStream = new TelephonyStream(Constants.DEFAULT_QUEUE_SIZE);
         this.register();
+        LTESignalStrength_dbm = -9999;
+        LTESignalStrength_asu = -9999;
+        GsmSignalStrength = -9999;
+        CdmaSignalStrenth = -9999;
+        CdmaSignalStrenthLevel = -9999;
+        GeneralSignalStrength = -9999;
+        isGSM = false;
     }
     @Override
     public void register() {
@@ -70,10 +83,10 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
     public void onStreamRegistration() {
 
         telephonyManager = (TelephonyManager) mApplicationContext.getSystemService(Context.TELEPHONY_SERVICE);
-        String carrierName = telephonyManager.getNetworkOperatorName();
+        carrierName = telephonyManager.getNetworkOperatorName();
         int networktype = telephonyManager.getNetworkType();
 
-        telephonyManager.listen(callStateListener,PhoneStateListener.LISTEN_CALL_STATE|PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        telephonyManager.listen(TelephonyStateListener,PhoneStateListener.LISTEN_CALL_STATE|PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
         switch (networktype) {
             case 0: Log.d(TAG, "UNKNOWN");
             case 1: Log.d(TAG, "GPRS");
@@ -98,7 +111,8 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
 
         Log.d(TAG, carrierName);
     }
-    private final PhoneStateListener callStateListener = new PhoneStateListener() {
+    private final PhoneStateListener TelephonyStateListener = new PhoneStateListener() {
+
         public void onCallStateChanged(int state, String incomingNumber) {
             if(state==TelephonyManager.CALL_STATE_RINGING){
                 Log.d(TAG, "ringing");
@@ -111,39 +125,85 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
             }
         }
         public void onSignalStrengthsChanged(SignalStrength sStrength) {
+
             String ssignal = sStrength.toString();
             String[] parts = ssignal.split(" ");
 
             int dbm;
             int asu;
+            //Log.d("parts8", parts[8]) = -1;
 
-            //If LTE 4G
+            /**If LTE 4G */
             if (telephonyManager.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE){
 
                 dbm = Integer.parseInt(parts[10]);
                 asu = 140 + dbm;
-                Log.d("LTE Signal strength (dbm)", String.valueOf(dbm));
-                Log.d("LTE Signal strength (asu)", String.valueOf(asu));
+                LTESignalStrength_dbm = dbm;
+                LTESignalStrength_asu = asu;
+                Log.d(TAG, "LTE Signal strength (dbm)" + String.valueOf(LTESignalStrength_dbm));
+                Log.d(TAG, "LTE Signal strength (asu)" + String.valueOf(LTESignalStrength_asu));
             }
-            // Else 3G
-            else {
-                if (signalStrength.isGsm()) {
-                    // For GSM Signal Strength: dbm =  (2*ASU)-113.
-                    if (signalStrength.getGsmSignalStrength() != 99) {
-                        int intdbm = -113 + 2 * signalStrength.getGsmSignalStrength();
-                        dbm = intdbm;
-                        Log.d("GSM Signal strength", String.valueOf(dbm));
-                    }
-                    else {
-                        dbm = signalStrength.getGsmSignalStrength();
-                    }
-                }
-                else {
-                    // cdma
-                    dbm = signalStrength.getCdmaDbm();
-                    Log.d("CDMA Signal strength", String.valueOf(dbm));
-                }
+            /** Else GSM 3G */
+            else if (sStrength.isGsm()) {
 
+                // For GSM Signal Strength: dbm =  (2*ASU)-113.
+                if (sStrength.getGsmSignalStrength() != 99) {
+                    dbm = -113 + 2 * sStrength.getGsmSignalStrength();
+                    GsmSignalStrength = dbm;
+                    Log.d(TAG, "GSM Signal strength" + String.valueOf(GsmSignalStrength));
+                } else {
+                    dbm = sStrength.getGsmSignalStrength();
+                    GsmSignalStrength = dbm;
+                    Log.d(TAG, "GSM Signal strength"+ String.valueOf(GsmSignalStrength));
+                }
+            }
+            /** CDMA */
+            else {
+                /**
+                 * DBM
+                 level 4 >= -75
+                 level 3 >= -85
+                 level 2 >= -95
+                 level 1 >= -100
+                 Ecio
+                 level 4 >= -90
+                 level 3 >= -110
+                 level 2 >= -130
+                 level 1 >= -150
+                 level is the lowest of the two
+                 actualLevel = (levelDbm < levelEcio) ? levelDbm : levelEcio;
+                 */
+                int snr = sStrength.getEvdoSnr();
+                int cdmaDbm = sStrength.getCdmaDbm();
+                int cdmaEcio = sStrength.getCdmaEcio();
+
+                int levelDbm;
+                int levelEcio;
+
+                if (snr == -1) { //if not 3G, use cdmaDBM or cdmaEcio
+                    if (cdmaDbm >= -75) levelDbm = 4;
+                    else if (cdmaDbm >= -85) levelDbm = 3;
+                    else if (cdmaDbm >= -95) levelDbm = 2;
+                    else if (cdmaDbm >= -100) levelDbm = 1;
+                    else levelDbm = 0;
+
+                    // Ec/Io are in dB*10
+                    if (cdmaEcio >= -90) levelEcio = 4;
+                    else if (cdmaEcio >= -110) levelEcio = 3;
+                    else if (cdmaEcio >= -130) levelEcio = 2;
+                    else if (cdmaEcio >= -150) levelEcio = 1;
+                    else levelEcio = 0;
+
+                    CdmaSignalStrenthLevel = (levelDbm < levelEcio) ? levelDbm : levelEcio;
+                    Log.d(TAG, "Telephony not 3G CDMA strength:" + CdmaSignalStrenthLevel);
+                }
+                else {  // if 3G, use SNR
+                    if (snr == 7 || snr == 8) CdmaSignalStrenthLevel =4;
+                    else if (snr == 5 || snr == 6 ) CdmaSignalStrenthLevel =3;
+                    else if (snr == 3 || snr == 4) CdmaSignalStrenthLevel = 2;
+                    else if (snr ==1 || snr ==2) CdmaSignalStrenthLevel =1;
+                    Log.d(TAG, "Telephony 3G CDMA strength:" + CdmaSignalStrenthLevel);
+                }
             }
         }
     };
