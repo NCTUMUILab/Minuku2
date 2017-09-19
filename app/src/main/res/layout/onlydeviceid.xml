@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/onlyDeviceId"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:paddingTop="30dp"
+        android:text="ID ="
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/deviceid"
+        android:textSize="25sp"
+        android:layout_below="@+id/button2"
+        android:layout_gravity="center_horizontal"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/sleepingTime"
+        android:textSize="25sp"
+        android:layout_height="75dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:text="Setting"
+            android:layout_width="170dp"
+            android:layout_height="63dp"
+            android:id="@+id/Setting"
+            android:textSize="18sp" />
+
+        <Button
+            android:text="Annotate"
+            android:id="@+id/Annotate"
+            android:layout_height="63dp"
+            android:layout_width="170dp"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</LinearLayout>
