@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context="edu.umich.si.inteco.minuku_2.MainActivity"
+    tools:context="edu.umich.si.nctu.minuku_2.MainActivity"
     android:weightSum="1"
     android:orientation="vertical">
 

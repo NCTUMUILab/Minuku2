@@ -1,9 +1,0 @@
-package edu.umich.si.inteco.minukucore.model;
-
-/**
- * Created by neerajkumar on 10/22/16.
- */
-
-public interface LocationBasedDataRecord extends DataRecord {
-    public String getLocation();
-}

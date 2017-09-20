@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.umich.si.inteco.minukucore">
+    package="edu.nctu.minukucore">
 
     <application
         android:allowBackup="true"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<edu.umich.si.inteco.minuku_2.view.customview.MoodEntryView
+<edu.umich.si.nctu.minuku_2.view.customview.MoodEntryView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="187dp"
