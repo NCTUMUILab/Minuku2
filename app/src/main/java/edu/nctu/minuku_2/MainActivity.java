@@ -26,7 +26,6 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,7 +41,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,8 +58,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import edu.nctu.minuku.event.DecrementLoadingProcessCountEvent;
 import edu.nctu.minuku.event.IncrementLoadingProcessCountEvent;
 import edu.nctu.minuku.logger.Log;
-import edu.nctu.minuku_2.controller.Ohio.recordinglistohio;
-import edu.nctu.minuku_2.controller.Ohio.settingohio;
 import edu.nctu.minuku_2.controller.home;
 import edu.nctu.minuku_2.controller.report;
 import edu.nctu.minuku_2.manager.InstanceManager;
@@ -85,13 +81,10 @@ public class MainActivity extends AppCompatActivity {
     public static ViewPager mViewPager;
 
     private TextView device_id;
-    private TextView sleepingtime;
 
-    private Button ohio_setting, ohio_annotate;
-    private String projName = "Ohio";
+    private String projName = "mobilecrowdsourcing";
 
     private int requestCode_setting = 1;
-    private Bundle requestCode_annotate;
 
 
     //private UserSubmissionStats mUserSubmissionStats;
@@ -108,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
 
         Log.e(TAG,"start");
 
-/*
         setContentView(R.layout.activity_main);
 
         final LayoutInflater mInflater = getLayoutInflater().from(this);
@@ -118,10 +110,9 @@ public class MainActivity extends AppCompatActivity {
         initViewPager(timerview,recordview);
 
         SettingViewPager();
-*/
 
         //** Please set your project name. **//
-        whichView(projName);
+//        whichView(projName);
 
         startService(new Intent(getBaseContext(), BackgroundService.class));
         //startService(new Intent(getBaseContext(), MinukuNotificationManager.class));
@@ -159,32 +150,6 @@ public class MainActivity extends AppCompatActivity {
             initViewPager(timerview,recordview);
 
             SettingViewPager();
-        }else if(projName.equals("Ohio")){
-
-//            requestCode_setting = new Bundle();
-            requestCode_annotate = new Bundle();
-
-            setContentView(R.layout.onlydeviceid);
-
-//            getDeviceid();
-
-            ohio_setting = (Button)findViewById(R.id.Setting);
-            ohio_setting.setOnClickListener(ohio_settinging);
-
-            ohio_annotate = (Button)findViewById(R.id.Annotate);
-            ohio_annotate.setOnClickListener(ohio_annotateing);
-
-            sleepingtime = (TextView)findViewById(R.id.sleepingTime);
-            SharedPreferences sharedPrefs = getSharedPreferences("edu.nctu.minuku_2", MODE_PRIVATE);
-            String sleepStartTime = sharedPrefs.getString("SleepingStartTime","Please select your start time");
-            String sleepEndTime = sharedPrefs.getString("SleepingEndTime","Please select your end time");
-
-            if(!sleepStartTime.equals("Please select your start time")&&!sleepEndTime.equals("Please select your end time"))
-                sleepingtime.setText("Your sleeping time is from"+"\r\n"+sleepStartTime+" to "+sleepEndTime);
-
-            //device_id=(TextView)findViewById(R.id.deviceid);
-
-            //device_id.setText("ID = "+Constant.DEVICE_ID);
 
         }
 
@@ -192,46 +157,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(projName.equals("Ohio")) {
-            switch (resultCode) {
-                case 1:
-                    String sleepStartTime = data.getExtras().getString("SleepingStartTime");
-                    String sleepEndTime = data.getExtras().getString("SleepingEndTime");
-                    if(!sleepStartTime.equals("Please select your start time")&&!sleepEndTime.equals("Please select your end time"))
-                        sleepingtime.setText("Your sleeping time is from "+"\r\n"+sleepStartTime+" to "+sleepEndTime);
 
-                    SharedPreferences.Editor editor_1 = getSharedPreferences("edu.nctu.minuku_2", MODE_PRIVATE).edit();
-                    editor_1.putString("SleepingStartTime",sleepStartTime);
-                    editor_1.commit();
-                    SharedPreferences.Editor editor_2 = getSharedPreferences("edu.nctu.minuku_2", MODE_PRIVATE).edit();
-                    editor_2.putString("SleepingEndTime",sleepEndTime);
-                    editor_2.commit();
-                    break;
-
-            }
-        }
     }
-
-    //to view settingohio
-    private Button.OnClickListener ohio_annotateing = new Button.OnClickListener() {
-        public void onClick(View v) {
-            Log.e(TAG,"recordinglist_ohio clicked");
-
-            startActivity(new Intent(MainActivity.this, recordinglistohio.class));
-
-        }
-    };
-
-    //to view settingohio
-    private Button.OnClickListener ohio_settinging = new Button.OnClickListener() {
-        public void onClick(View v) {
-            Log.e(TAG,"settingohio clicked");
-
-            startActivityForResult(new Intent(MainActivity.this, settingohio.class),requestCode_setting);
-//            startActivity(new Intent(MainActivity.this, settingohio.class));
-
-        }
-    };
 
     //public for update
     public void initViewPager(View timerview, View recordview){

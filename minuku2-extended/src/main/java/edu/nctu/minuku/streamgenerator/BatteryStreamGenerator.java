@@ -59,12 +59,13 @@ public class BatteryStreamGenerator extends AndroidStreamGenerator<BatteryDataRe
     @Override
     public boolean updateStream() {
 
+
         return true;
     }
 
     @Override
     public long getUpdateFrequency() {
-        return 15;
+        return 1;
     }
 
     @Override

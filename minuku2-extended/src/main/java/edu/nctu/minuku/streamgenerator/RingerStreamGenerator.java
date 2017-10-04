@@ -54,7 +54,7 @@ public class RingerStreamGenerator extends AndroidStreamGenerator<RingerDataReco
 
     @Override
     public long getUpdateFrequency() {
-        return 15;
+        return 1;
     }
 
     @Override

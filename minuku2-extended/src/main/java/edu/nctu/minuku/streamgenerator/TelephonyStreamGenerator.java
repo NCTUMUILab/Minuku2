@@ -71,7 +71,7 @@ public class TelephonyStreamGenerator extends AndroidStreamGenerator<TelephonyDa
 
     @Override
     public long getUpdateFrequency() {
-        return 15;
+        return 1;
     }
 
     @Override
